@@ -19,7 +19,7 @@ def download():
         #yt.streams.get_highest_resolution().download(output_path="downloads/")
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
-        return "Downloaded"
+        return render_template("submission.html")
     except Exception as e:
         return f"Error: {e}"
 

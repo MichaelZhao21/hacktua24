@@ -1,25 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hack TUA</title>
-    <link rel="stylesheet" href="../static/styles.css">
-</head>
-<body>
-    <header>
-        <h1>Hack TUA</h1>
-    </header>
-    <main>
-        <p>This is the main content area.</p>
-        <form method="POST" action="/download">
-            <label for="url">Enter URL:</label>
-            <input type="text" id="url" name="url" required><br>
-            <input type="submit" value="Submit">
-        </form>
-    </main>
-    <footer>
-        <p>&copy; 2023 HackUTA 24. All rights reserved.</p>
-    </footer>
-</body>
-</html>
+{% extends 'base.html' %}
+{% block content %}
+    <form method="POST" action="/download">
+        <label for="url">Enter URL:</label>
+        <input type="text" id="url" name="url" required><br>
+
+        <label for="url">Time Signature:</label>
+        <input type="number" id="timesig" name="timesig" required><br>
+
+        <label for="url">Tempo:</label>
+        <input type="number" id="tempo" name="tempo" required><br>
+
+        <input type="submit" value="Submit">
+    </form>
+{% endblock %}
