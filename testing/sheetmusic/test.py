@@ -15,7 +15,9 @@ score = Score(title="My Composition")
 
 # Create two parts
 part1 = Part(part_name='P1')
+part1.instrument_name = "Piano"
 part2 = Part(part_name='P2')
+part2.instrument_name = "Piano"
 
 # Create clefs for part1 and part2
 part1clef = Clef(sign="G", line=2)  # Treble clef for part1
@@ -51,6 +53,7 @@ def process_notes(part, notes, clef):
 
     # Add the clef to the first measure
     measure.clef = clef
+    measure.time_signature = (4,4)
 
     # Group notes by start time
     notes_by_start = {}

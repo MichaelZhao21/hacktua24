@@ -24,7 +24,6 @@ def extract_notes(file_path):
         if col == rgb_list[0] and col == rgb_list[1] and col == rgb_list[2] and col == rgb_list[3] and col == rgb_list[4]:
             print("FRAME VIDEO STARTS IS:", count)
             final = image
-            cv2.imwrite("frame%d.jpg" % count, final)
             break
 
         rgb_list[0] = rgb_list[1]
