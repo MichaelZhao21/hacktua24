@@ -50,8 +50,6 @@ def process_notes(part, notes, clef):
     max_length = 4
     measure = Measure(number=m_number)
     current_time = 0
-    tempo = MetronomeMark(beat_length=1.0, bpm=120)
-    added_tempo = False
 
     # Add the clef to the first measure
     measure.clef = clef
@@ -84,34 +82,16 @@ def process_notes(part, notes, clef):
 
             # Create chord if we have valid pitches
             if pitches:
-                # Consider durations too (split into tied notes)
-                tied_durations = split_duration_into_tied_notes(duration)
-                for tied_duration in tied_durations:
-                    if not added_tempo:
-                        chord_to_add = Chord(pitches=pitches, duration=tied_duration, directions=tempo)
-                        added_tempo = True
-                    else:
-                        chord_to_add = Chord(pitches=pitches, duration=tied_duration)
+                chord_to_add = Chord(pitches=pitches, duration=duration)
 
-                    if current_time + tied_duration > max_length:
-                        part.append(measure)
-                        m_number += 1
-                        measure = Measure(number=m_number)
-                        current_time = 0
+                if current_time + duration > max_length:
+                    part.append(measure)
+                    m_number += 1
+                    measure = Measure(number=m_number)
+                    current_time = 0
 
-                    measure.append(chord_to_add)
-                    current_time += tied_duration
-
-                # chord_to_add = Chord(pitches=pitches, duration=duration)
-
-                # if current_time + duration > max_length:
-                #     part.append(measure)
-                #     m_number += 1
-                #     measure = Measure(number=m_number)
-                #     current_time = 0
-
-                # measure.append(chord_to_add)
-                # current_time += duration
+                measure.append(chord_to_add)
+                current_time += duration
 
         else:
             # Single note or rest
@@ -142,18 +122,10 @@ def process_notes(part, notes, clef):
                 tied_durations = split_duration_into_tied_notes(note.duration)
 
                 for tied_duration in tied_durations:
-                    if not added_tempo:
-                        note_to_add = Note(
-                            pitch=pitch,
-                            duration=tied_duration,
-                            directions=tempo
-                        )
-                        added_tempo = True
-                    else:
-                        note_to_add = Note(
-                            pitch=pitch,
-                            duration=tied_duration
-                        )
+                    note_to_add = Note(
+                        pitch=pitch,
+                        duration=tied_duration
+                    )
 
                     if current_time + tied_duration > max_length:
                         part.append(measure)
@@ -216,13 +188,28 @@ def convert_musicxml_to_pdf(musicxml_path, pdf_path, musescore_path):
         print(f"Successfully converted {musicxml_path} to {pdf_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error converting MusicXML file to PDF: {e}")
+        
+def convert_musicxml_to_midi(musicxml_path, midi_path):
+    if not os.path.exists(musicxml_path):
+        raise FileNotFoundError(f"MusicXML file not found: {musicxml_path}")
+
+    try:
+        score = converter.parse(musicxml_path)
+        score.write('midi', fp=midi_path)
+        print(f"Successfully converted {musicxml_path} to {midi_path}")
+    except Exception as e:
+        print(f"Error converting MusicXML to MIDI: {e}")
 
 # Export the score to a MusicXML file
 score.export_to_file("my_music.xml")
 
 musicxml_file = "my_music.xml"
 pdf_file = "my_music.pdf"
-# musescore_executable = "C:/Program Files/MuseScore 3/bin/MuseScore3.exe"
-musescore_executable = "/usr/bin/musescore"
+musescore_executable = "C:/Program Files/MuseScore 3/bin/MuseScore3.exe"
 
 convert_musicxml_to_pdf(musicxml_file, pdf_file, musescore_executable)
+
+midi_file = "my_music.mid"
+
+# Convert MusicXML to MIDI
+convert_musicxml_to_midi(musicxml_file, midi_file)
