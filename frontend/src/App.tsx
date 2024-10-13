@@ -10,6 +10,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Split />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />}/>
+          <Route path="/result" element={<Result xmlPath={"http://localhost:5000/xml"} />} />
+
         </Routes>
       </Router>
     </div>
