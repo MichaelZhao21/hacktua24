@@ -8,11 +8,15 @@
     {% block head %}{% endblock %}
 </head>
 <body>
-    <header>
-        <h1>Hack TUA</h1>
-    </header>
+    <div class="groups">
+        <div class="form">
+            {% block content %}{% endblock %}
+        </div>
+        <div class="pics">
+            <img src="../static/piano.jpeg" alt="hero">
+        </div>
+    </div>
     <main>
-        {% block content %}{% endblock %}
     </main>
     <footer>
         <p>&copy; Hawk tuah 24. All rights reserved.</p>

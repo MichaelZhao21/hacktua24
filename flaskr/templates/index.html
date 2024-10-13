@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
 {% block content %}
-    <form method="POST" action="/download">
+<header>
+    <a href="/"><h1 >Hack TUA</h1></a>
+</header>
+    <div class="hero">
+        <h1>Access music.</h1>
+    </div>
+    <form method="POST" action="/download" onsubmit="showLoadingScreen()">
         <label for="url">Enter URL:</label>
         <input type="text" id="url" name="url" required><br>
 
@@ -12,4 +18,16 @@
 
         <input type="submit" value="Submit">
     </form>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" style="display: none;">
+        <div class="loader"></div>
+        <p>Loading, please wait...</p>
+    </div>
+
+    <script>
+        function showLoadingScreen() {
+            document.getElementById('loading-screen').style.display = 'block';
+        }
+    </script>
 {% endblock %}
