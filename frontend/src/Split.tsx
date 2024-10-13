@@ -81,22 +81,7 @@ const Split = () => {
 
   return (
     <div>
-      <div className="fixed top-0 left-0 bg-white w-full">
-        <Button>
-          <Link
-            to="/login"
-            style={{
-              textDecoration: "none",
-              color: "inherit",
-              fontFamily: "Poppins",
-              fontSize: "20px",
-              fontWeight: "bold",
-            }}
-          >
-            Login
-          </Link>
-        </Button>
-      </div>
+        <Navbar />
       <div className="h-screen flex split-background">
         {/* Form Section */}
         <div className="flex-1 flex items-center justify-center">
