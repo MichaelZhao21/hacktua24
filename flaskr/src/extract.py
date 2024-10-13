@@ -18,14 +18,14 @@ def extract_notes(file_path, bpm=100, max_seconds=30):
     count = -1
     rgb_list = [0, 0, 0, 0, 0]
 
-    while count < 200:
+    while count < 1000:
         success, image = vidcap.read()
         if not success:
             raise Exception("Video processing failed")
 
         count += 1
 
-        px = image[1050, 30]
+        px = image[image.shape[0] - 30, 30]
         if np.mean(px) < 100:
             continue
         col = np.mean(px)
@@ -39,6 +39,9 @@ def extract_notes(file_path, bpm=100, max_seconds=30):
         rgb_list[2] = rgb_list[3]
         rgb_list[3] = rgb_list[4]
         rgb_list[4] = col
+    
+    if final is None:
+        raise Exception("Could not find the start of the video")
     
     # FIGURE OUT WHERE PIANO IS
     col = np.mean(final[10][10])
