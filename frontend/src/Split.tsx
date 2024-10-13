@@ -5,38 +5,31 @@ import {
 } from '@mui/material';
 import './Split.css'; // Import the CSS file
 
-const Split: React.FC = () => {
+const Split = () => {
     const [url, setUrl] = useState('');
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-    
-        // Send the URL to the Flask backend
-        const response = await fetch('/snatch', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ url }),
-        });
-    
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data); // Handle the response as needed
-        } else {
-          console.error('Error:', response.statusText);
-        }
-      };
 
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // Send the URL to the Flask backend
+    const response = await fetch('/snatch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data); // Handle the response as needed
+    } else {
+      console.error('Error:', response.statusText);
+    }
+  };
 
   return (
-    <div>
-    <Button>
-        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Score Snag</Link>
-    </Button>
-    <Button>
-        <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</Link>
-    </Button>
-    <div className="h-screen flex">
+    <div className="h-screen flex split-background">
       {/* Form Section */}
       <div className="flex-1 flex items-center justify-center p-8">
         <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
@@ -47,6 +40,8 @@ const Split: React.FC = () => {
             variant="outlined"
             fullWidth
             required
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
             sx={{
               '& label': { 
                   color: 'white',
@@ -62,8 +57,6 @@ const Split: React.FC = () => {
               '&:hover fieldset': { borderColor: 'white' }, // Border color on hover
               '&.Mui-focused fieldset': { borderColor: 'white' }, // Border color when focused
             }}
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
           />
           <TextField
             label="Time Signature"
