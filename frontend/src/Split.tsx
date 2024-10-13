@@ -73,7 +73,7 @@ const Split = () => {
             <h3 className="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 poppins-bold">
               Instant Sheet Music from Your Favorite Piano Videos
             </h3>
-            <h5 className="text-2xl font-normal text-center poppins bg-clip-text text-transparent w-[30%] bg-gradient-to-r text-gray-50 pb-8">
+            <h5 className="text-2xl font-normal text-center poppins bg-clip-text w-[30%] bg-gl;radient-to-r text-gray-50 pb-8">
               Just upload the URL of any MIDI YouTube video to get a PDF version
               of the sheet music.
             </h5>

@@ -2,7 +2,7 @@
 import { Button } from "@mui/material";
 
 import { Link } from "react-router-dom";
-import logo from "../public/logo.png";
+import logo from './logo.png';
 
 
 function Navbar() {
@@ -17,7 +17,7 @@ function Navbar() {
             style={{ width: "30px", height: "auto" }}
           />
         </div>
-        <div className="poppins-bold grow ml-2 text-primary">ScoreSnag</div>
+        <div className="poppins-bold grow ml-2 text-xl text-primary">ScoreSnag</div>
         <Button sx={{}}>
           <Link
             to="/login"
