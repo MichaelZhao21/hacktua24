@@ -1,27 +1,24 @@
-import React, { useState } from "react";
-import { TextField } from "@mui/material";
-
-import "./Split.css"; // Import the CSS file
-import { useNavigate } from "react-router-dom";
-
+import React, { useState, useEffect } from "react";
+import { TextField, Button } from "@mui/material";
+import "./Split.css"; // Import the CSS file for styling
+import { Link, useNavigate } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
-
-import SendIcon from "@mui/icons-material/Send"; // Send icon resembles a paper airplane
-
-import "./Split.css";
-import { Typography } from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
 import CircularProgress from "@mui/material/CircularProgress";
 import { styled } from "@mui/material/styles";
-import Navbar from "./Navbar";
+import { Typography } from "@mui/material";
+
+// Import the Loader component
+import Loader from "./Loader";
 
 const SquareFilledButton = styled(IconButton)(({ theme }) => ({
-  width: "48px", // Adjust the size as needed
-  height: "48px", // Adjust the size as needed
-  borderRadius: "4px", // Keep it square
-  backgroundColor: theme.palette.primary.main, // Filled background color
-  color: theme.palette.common.white, // Icon color
+  width: "48px",
+  height: "48px",
+  borderRadius: "4px",
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.common.white,
   "&:hover": {
-    backgroundColor: theme.palette.primary.dark, // Darker shade on hover
+    backgroundColor: theme.palette.primary.dark,
   },
 }));
 
@@ -31,35 +28,66 @@ const Split = () => {
   const [url, setUrl] = useState("");
   const [maxSeconds, setMax] = useState("30");
   const [loading, setLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true); // Page loading state
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  // Simulate page loading delay (e.g., fetching initial data)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsPageLoading(false); // After 3 seconds, page loading will stop
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleSubmit = async (event: { preventDefault: () => void; }) => {
     event.preventDefault();
-    setLoading(true);
+    setLoading(true); // Start loader when form is submitted
 
-    // Send the URL to the Flask backend
-    const response = await fetch(`${URL}/snatch`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ url, maxSeconds }),
-    });
+    try {
+      const response = await fetch(`${URL}/snatch`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ url, maxSeconds }),
+      });
 
-    setLoading(false);
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log(data); // Handle the response as needed
-      navigate("/result", { state: { data } });
-    } else {
-      console.error("Error:", response.statusText);
+      if (response.ok) {
+        const data = await response.json();
+        navigate("/result", { state: { data } });
+      } else {
+        console.error("Error:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+    } finally {
+      setLoading(false); // Stop loader after the request completes
     }
   };
 
+  // If the page or request is loading, show the Loader component
+  if (isPageLoading || loading) {
+    return <Loader />;
+  }
+
   return (
     <div>
-      <Navbar />
+      <div className="fixed top-0 left-0 bg-white w-full">
+        <Button>
+          <Link
+            to="/login"
+            style={{
+              textDecoration: "none",
+              color: "inherit",
+              fontFamily: "Poppins",
+              fontSize: "20px",
+              fontWeight: "bold",
+            }}
+          >
+            Login
+          </Link>
+        </Button>
+      </div>
       <div className="h-screen flex split-background">
         {/* Form Section */}
         <div className="flex-1 flex items-center justify-center">
@@ -73,7 +101,7 @@ const Split = () => {
             <h3 className="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 poppins-bold">
               Instant Sheet Music from Your Favorite Piano Videos
             </h3>
-            <h5 className="text-2xl font-normal text-center poppins bg-clip-text w-[30%] bg-gl;radient-to-r text-gray-50 pb-8">
+            <h5 className="text-2xl font-normal text-center poppins bg-clip-text text-transparent w-[30%] bg-gradient-to-r text-gray-50 pb-8">
               Just upload the URL of any MIDI YouTube video to get a PDF version
               of the sheet music.
             </h5>
@@ -91,32 +119,32 @@ const Split = () => {
                   width: "30rem",
                   "& label": {
                     color: "white", // Label color
-                    fontFamily: "Poppins, sans-serif", // Font family for label
+                    fontFamily: "Poppins, sans-serif",
                   },
                   "& label.Mui-focused": {
-                    color: "white", // Label color when focused
+                    color: "white",
                   },
                   "& .MuiOutlinedInput-root": {
                     "& input": {
-                      color: "white", // Text color
-                      fontFamily: "Poppins, sans-serif", // Apply font family here
+                      color: "white",
+                      fontFamily: "Poppins, sans-serif",
                     },
                     "& fieldset": {
-                      borderColor: "white", // Border color for the outline
+                      borderColor: "white",
                     },
                     "&:hover fieldset": {
-                      borderColor: "white", // Border color on hover
+                      borderColor: "white",
                     },
                     "&.Mui-focused fieldset": {
-                      borderColor: "white", // Border color when focused
+                      borderColor: "white",
                     },
                   },
-                  flexGrow: 1, // Ensure this applies if part of a flex container
+                  flexGrow: 1,
                 }}
               />
 
               <SquareFilledButton
-                onClick={handleSubmit as any}
+                onClick={handleSubmit}
                 aria-label="submit"
                 className="bg-primary hover:bg-primary text-white font-bold py-2 px-4 rounded font-sans"
                 disabled={loading}
@@ -136,24 +164,24 @@ const Split = () => {
                 sx={{
                   width: "8rem",
                   "& label": {
-                    color: "white", // Label color
-                    fontFamily: "Poppins, sans-serif", // Font family for label
+                    color: "white",
+                    fontFamily: "Poppins, sans-serif",
                   },
                   "& label.Mui-focused": {
-                    color: "white", // Label color on focus
+                    color: "white",
                   },
                   "& .MuiInputBase-input": {
-                    color: "white", // Input text color
-                    fontFamily: "Poppins, sans-serif", // Font family for input text
+                    color: "white",
+                    fontFamily: "Poppins, sans-serif",
                   },
                   "& .MuiInput-underline:before": {
-                    borderBottom: "1px solid white", // Underline color before focus
+                    borderBottom: "1px solid white",
                   },
                   "& .MuiInput-underline:after": {
-                    borderBottom: "2px solid white", // Underline color after focus
+                    borderBottom: "2px solid white",
                   },
                   "&:hover .MuiInput-underline:before": {
-                    borderBottom: "1px solid white", // Underline color on hover
+                    borderBottom: "1px solid white",
                   },
                 }}
               />
@@ -164,13 +192,6 @@ const Split = () => {
               </p>
             </div>
           </form>
-          {loading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-              <Typography variant="h6" color="white">
-                Loading...
-              </Typography>
-            </div>
-          )}
         </div>
       </div>
     </div>
