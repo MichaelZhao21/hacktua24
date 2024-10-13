@@ -6,59 +6,15 @@ from collections import namedtuple
 
 Note = namedtuple("Note", ["name", "sharp", "octave", "hand", "start", "end", "duration"])
 
+def extract_notes(file_path):
+    vidcap = cv2.VideoCapture(file_path) 
 
-def merge_ranges(busy_ranges):
-    # Step 1: Sort busy ranges by start time
-    busy_ranges.sort(key=lambda x: x[0])
-
-    merged = []
-    for start, end in busy_ranges:
-        if not merged or merged[-1][1] < start:
-            # No overlap
-            merged.append((start, end))
-        else:
-            # Merge overlapping or adjacent ranges
-            merged[-1] = (merged[-1][0], max(merged[-1][1], end))
-
-    return merged
-
-
-def find_available_ranges(busy_ranges, total_start, total_end):
-    # Merge the busy ranges
-    merged_busy = merge_ranges(busy_ranges)
-
-    available_ranges = []
-
-    # Step 3: Find gaps between merged busy times
-    # Start from the beginning of the total time range
-    current_time = total_start
-
-    for busy_start, busy_end in merged_busy:
-        if current_time < busy_start:
-            # If there's a gap, add the available range
-            available_ranges.append((current_time, busy_start))
-        # Move the current time to the end of the busy range
-        current_time = max(current_time, busy_end)
-
-    # Check for a gap after the last busy range
-    if current_time < total_end:
-        available_ranges.append((current_time, total_end))
-
-    return available_ranges
-
-
-def extract_notes(video_path: str) -> Note:
-    vidcap = cv2.VideoCapture(video_path)
+    # Video processing
     count = -1
-
     rgb_list = [0, 0, 0, 0, 0]
 
-    # FIND FIRST FRAME
-    while count < 1000:
+    while count < 200:
         success, image = vidcap.read()
-        if not success:
-            vidcap.release()
-            raise Exception('[ERROR] Could not find the start of the video -- no frames found')
         count += 1
 
         px = image[1050, 30]
@@ -77,18 +33,14 @@ def extract_notes(video_path: str) -> Note:
         rgb_list[3] = rgb_list[4]
         rgb_list[4] = col
 
-    if count == 1000:
-        vidcap.release()
-        raise Exception('[ERROR] Could not find the start of the video')
-
-    # Figure out where keys are
+    # Keyboard counting
     indexacross = 0
     trackchanges = []
     colortracker = 0
     indexofchange = 0
 
     while indexacross < 1920:
-        bar = final[890, indexacross]
+        bar = image[890, indexacross]
         indexacross += 1
         averagergbval = np.mean(bar)
 
@@ -102,9 +54,8 @@ def extract_notes(video_path: str) -> Note:
                 indexofchange = indexacross
                 trackchanges.append(indexofchange)
                 colortracker = 1
-    
+                
     breaks = [(b, i % 2 == 0) for i, b in enumerate(trackchanges)]
-    # Group into octaves
     noteas = []
     start = 1
 
@@ -116,9 +67,6 @@ def extract_notes(video_path: str) -> Note:
 
     jns = ''.join(map(lambda x: x[1], noteas))
     oct = jns.find('WBWBWWBWBWBW')
-
-    # Octave notes = 12
-    # Get first octave
     octaves = [noteas[0:oct]]
 
     while oct < len(jns):
@@ -129,23 +77,20 @@ def extract_notes(video_path: str) -> Note:
     octaves = list(filter(lambda x: len(x) > 0, octaves))
 
     lens = list(map(lambda x: len(x), octaves))
-    print("Octave lengths:", lens)
-    # lens = [5, 12, 12, 12, 12, 12, 12, 12, 2]
     total_octaves = len(lens)
     if lens[0] < 12:
         total_octaves -= 1
     if lens[-1] < 12:
         total_octaves -= 1
 
-    mid_c = math.ceil(total_octaves / 2)
+    mid_c = math.ceil((total_octaves-1) / 2)
     if lens[0] < 12:
         mid_c += 1
 
-    # If middle C ends up on the left 40% of the screen, it is probably wrong...
-    if octaves[mid_c][0][0][0] < final.shape[1] * 0.4:
-        mid_c += 1
-    print('Middle C:', mid_c)
-    
+    print("Lengths of octaves:", lens)
+    print("Total octaves:", total_octaves)
+    print("Middle C octave:", mid_c)
+
     Key = namedtuple('Key', ['x', 'name', 'sharp', 'octave', 'color'])
 
     note_map = [
@@ -163,8 +108,8 @@ def extract_notes(video_path: str) -> Note:
         ('B', False),
     ]
 
-    # TODO: Change this
-    y = 890
+    # TODO: NEED TO FGIGURE OUT HOW TO ABSTERAC^TLY GFIGURE THIS OUT
+    y = 850
 
     keys = []
     for i, o in enumerate(octaves):
@@ -174,14 +119,13 @@ def extract_notes(video_path: str) -> Note:
             x = (no[0][0] + no[0][1]) // 2
             keys.append(Key(x, n[0], n[1], 4 - mid_c + i, np.mean(final[y][x])))
 
+    print("Processing all the frames...")
     ColorNote = namedtuple("ColorNote", ["name", "sharp", "octave", "color", "start", "end"])
 
-    print("Processing all frames now...")
     cnotes = []
     curr_keys = dict()
 
     # Iterate through the rest of the frames
-    # TODO: Abstract count to param
     while success and count < 2000:
         success, image = vidcap.read()
         if not success:
@@ -210,8 +154,7 @@ def extract_notes(video_path: str) -> Note:
         for a in added:
             curr_keys[a] = new_keys[a]
 
-
-    print("Done processing frames! Generating notes...")
+    print("Done! Generating notes...")
 
     # Sort notes by start
     cnotes.sort(key=lambda x: x.start)
@@ -234,8 +177,7 @@ def extract_notes(video_path: str) -> Note:
     elif ord(cnotes[0].name) > ord(cnotes[i+1].name):
         center_a, center_b = center_b, center_a
 
-    print("Color LH:", center_a)
-    print("Color RH:", center_b)
+    print("Color Centers:", center_a, center_b)
 
     def get_hand(col):
         hsv = colorsys.rgb_to_hsv(col[2] / 255, col[1] / 255, col[0] / 255)[0] * 360
@@ -254,6 +196,45 @@ def extract_notes(video_path: str) -> Note:
     first = notes[0].start
     last = sorted(notes, key=lambda x: x.end, reverse=True)[0].end
 
+    def merge_ranges(busy_ranges):
+        # Step 1: Sort busy ranges by start time
+        busy_ranges.sort(key=lambda x: x[0])
+
+        merged = []
+        for start, end in busy_ranges:
+            if not merged or merged[-1][1] < start:
+                # No overlap
+                merged.append((start, end))
+            else:
+                # Merge overlapping or adjacent ranges
+                merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+
+        return merged
+
+    def find_available_ranges(busy_ranges, total_start, total_end):
+        # Merge the busy ranges
+        merged_busy = merge_ranges(busy_ranges)
+
+        available_ranges = []
+
+        # Step 3: Find gaps between merged busy times
+        # Start from the beginning of the total time range
+        current_time = total_start
+
+        for busy_start, busy_end in merged_busy:
+            if current_time < busy_start:
+                # If there's a gap, add the available range
+                available_ranges.append((current_time, busy_start))
+            # Move the current time to the end of the busy range
+            current_time = max(current_time, busy_end)
+
+        # Check for a gap after the last busy range
+        if current_time < total_end:
+            available_ranges.append((current_time, total_end))
+
+        return available_ranges
+
+    # Find ranges
     left_range = find_available_ranges(left_hands, first, last)
     right_range = find_available_ranges(right_hands, first, last)
 
@@ -267,7 +248,7 @@ def extract_notes(video_path: str) -> Note:
     # Sort notes again
     notes.sort(key=lambda x: x.start)
 
-    # TODO: Change
+    # TODO: THESE WILL ACTUALLY BE EXPORTEDDDD
     fps = 60
     bpm = 136
 
@@ -276,7 +257,6 @@ def extract_notes(video_path: str) -> Note:
 
     # AAAAAAA
     # COMBINE THE MOTHER FUCKIN RESTS BRUH
-
     left_list = list(filter(lambda x: x.hand == 'L', notes))
     right_list = list(filter(lambda x: x.hand == 'R', notes))
 
