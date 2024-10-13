@@ -7,7 +7,7 @@ import { getAuth } from 'firebase/auth';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "",
+  apiKey: "AIzaSyAtn2-WLqFV8fTnuq6f-t2QTd6DNbHRKgA",
   authDomain: "scoresnag.firebaseapp.com",
   projectId: "scoresnag",
   storageBucket: "scoresnag.appspot.com",
