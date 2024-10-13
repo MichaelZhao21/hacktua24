@@ -12,6 +12,7 @@ def extract_notes(file_path, bpm=100, max_seconds=30):
     vidcap = cv2.VideoCapture(file_path) 
 
     limit = max_seconds * fps
+    final = None
 
     # Video processing
     count = -1
@@ -19,6 +20,9 @@ def extract_notes(file_path, bpm=100, max_seconds=30):
 
     while count < 200:
         success, image = vidcap.read()
+        if not success:
+            raise Exception("Video processing failed")
+
         count += 1
 
         px = image[1050, 30]
@@ -35,6 +39,18 @@ def extract_notes(file_path, bpm=100, max_seconds=30):
         rgb_list[2] = rgb_list[3]
         rgb_list[3] = rgb_list[4]
         rgb_list[4] = col
+    
+    # FIGURE OUT WHERE PIANO IS
+    col = np.mean(final[10][10])
+    i = image.shape[0] // 2
+    while abs(np.mean(final[i][10]) - col) < 10:
+        i += 1
+    print("PIANO TOP AT:", i)
+
+    # Figure out line 2
+    off = (image.shape[0] - i) // 3
+    y = i + off
+    print("PIANO IS AT:", y)
 
     # Keyboard counting
     indexacross = 0
@@ -110,9 +126,6 @@ def extract_notes(file_path, bpm=100, max_seconds=30):
         ('A', True),
         ('B', False),
     ]
-
-    # TODO: NEED TO FGIGURE OUT HOW TO ABSTERAC^TLY GFIGURE THIS OUT
-    y = 850
 
     keys = []
     for i, o in enumerate(octaves):
