@@ -16,26 +16,44 @@ function GeneratedMusic3() {
 
   return (
     <div>
-      <Card sx={{ 
-            display: 'flex',
-            fontFamily: 'Poppins', 
-            fontSize: '20px', 
-            fontWeight: 'bold',
-       }}>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <CardContent sx={{ 
-                flex: '1 0 auto',
-                fontFamily: 'Poppins', 
-                fontSize: '20px', 
-                fontWeight: 'bold',
-            }}>
-            <InsertDriveFileIcon />
-            <Typography component="div" variant="h5">
-              Live From Space
-            </Typography>
-            <Typography variant="subtitle1" component="div" sx={{ color: 'text.secondary' }}>
-              Mac Miller
-            </Typography>
+      <Card
+        sx={{
+          display: "flex",
+          fontFamily: "Poppins",
+          fontSize: "20px",
+          fontWeight: "bold",
+          width: "100%",
+          marginBottom: "1rem",
+        }}
+      >
+        <Box sx={{ display: "flex", flexDirection: "column" }}>
+          <CardContent
+            sx={{
+              flex: "1 0 auto",
+              fontFamily: "Poppins",
+              fontSize: "20px",
+              fontWeight: "bold",
+            }}
+          >
+            <a className="flex flex-row items-center px-4 cursor-pointer duration-200 hover:text-primary" href="/results/3">
+              <InsertDriveFileIcon fontSize="large"/>
+              <div className="flex flex-col ml-8">
+                <Typography
+                  component="div"
+                  variant="h5"
+                  sx={{ fontWeight: "bold" }}
+                >
+                  Payphone
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  component="div"
+                  sx={{ color: "text.secondary" }}
+                >
+                  Maroon 5
+                </Typography>
+              </div>
+            </a>
           </CardContent>
         </Box>
       </Card>

@@ -7,11 +7,7 @@ import { Button } from "@mui/material";
 
 import { Link } from "react-router-dom";
 
-interface ResultProps {
-  xmlPath: string;
-}
-
-const Result: React.FC<ResultProps> = () => {
+const Result2: React.FC = () => {
   const xmlPath = 'http://localhost:5000/xml/2'
   const containerRef = useRef<HTMLDivElement>(null);
   const osmdRef = useRef<OpenSheetMusicDisplay | null>(null);
@@ -81,4 +77,4 @@ const Result: React.FC<ResultProps> = () => {
   );
 };
 
-export default Result;
+export default Result2;
