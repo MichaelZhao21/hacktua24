@@ -12,7 +12,9 @@ import { Typography } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 
 const Split = () => {
-    const [url, setUrl] = useState('');
+    const [url, setUrl ] = useState('');
+    const [tempo, setTemp] = useState('');
+    const [maxSeconds, setMax] = useState('');
     const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -25,7 +27,7 @@ const Split = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ url }),
+      body: JSON.stringify({ url, tempo, maxSeconds }),
     });
 
     setLoading(false);
@@ -83,6 +85,8 @@ const Split = () => {
             type='number'
             fullWidth
             required
+            value={tempo}
+            onChange={(e) => setTemp(e.target.value)}
             size="small"
             sx={{
               '& label': { 
@@ -107,6 +111,8 @@ const Split = () => {
             type='number'
             fullWidth
             required
+            value={maxSeconds}
+            onChange={(e) => setMax(e.target.value)}
             size="small"
             sx={{
               '& label': { 
