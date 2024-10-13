@@ -3,8 +3,29 @@ from collections import namedtuple
 from music21 import converter
 import subprocess
 import os
+import note_data
 
 Noted = namedtuple("Noted", ["name", "sharp", "octave", "hand", "start", "end", "duration"])
+
+# Define the notes
+Notes = note_data.notes
+
+# Create a score
+score = Score(title="My Composition")
+
+# Create two parts
+part1 = Part(part_name='P1')
+part1.instrument_name = "Piano"
+part2 = Part(part_name='P2')
+part2.instrument_name = "Piano"
+
+# Create clefs for part1 and part2
+part1clef = Clef(sign="G", line=2)  # Treble clef for part1
+part2clef = Clef(sign="F", line=4)  # Bass clef for part2
+
+# Append the parts to the score
+score.append(part1)
+score.append(part2)
 
 def split_duration_into_tied_notes(duration):
     # Define the note values for common durations
@@ -24,13 +45,11 @@ def split_duration_into_tied_notes(duration):
 
     return tied_notes
 
-def process_notes(part, notes, clef, tempo, no_tempo=False):
+def process_notes(part, notes, clef):
     m_number = 1
     max_length = 4
     measure = Measure(number=m_number)
     current_time = 0
-    tempo = MetronomeMark(beat_length=1.0, bpm=tempo)
-    added_tempo = no_tempo
 
     # Add the clef to the first measure
     measure.clef = clef
@@ -63,23 +82,16 @@ def process_notes(part, notes, clef, tempo, no_tempo=False):
 
             # Create chord if we have valid pitches
             if pitches:
-                # Consider durations too (split into tied notes)
-                tied_durations = split_duration_into_tied_notes(duration)
-                for tied_duration in tied_durations:
-                    if not added_tempo:
-                        chord_to_add = Chord(pitches=pitches, duration=tied_duration, directions=tempo)
-                        added_tempo = True
-                    else:
-                        chord_to_add = Chord(pitches=pitches, duration=tied_duration)
+                chord_to_add = Chord(pitches=pitches, duration=duration)
 
-                    if current_time + tied_duration > max_length:
-                        part.append(measure)
-                        m_number += 1
-                        measure = Measure(number=m_number)
-                        current_time = 0
+                if current_time + duration > max_length:
+                    part.append(measure)
+                    m_number += 1
+                    measure = Measure(number=m_number)
+                    current_time = 0
 
-                    measure.append(chord_to_add)
-                    current_time += tied_duration
+                measure.append(chord_to_add)
+                current_time += duration
 
         else:
             # Single note or rest
@@ -110,18 +122,10 @@ def process_notes(part, notes, clef, tempo, no_tempo=False):
                 tied_durations = split_duration_into_tied_notes(note.duration)
 
                 for tied_duration in tied_durations:
-                    if not added_tempo:
-                        note_to_add = Note(
-                            pitch=pitch,
-                            duration=tied_duration,
-                            directions=tempo
-                        )
-                        added_tempo = True
-                    else:
-                        note_to_add = Note(
-                            pitch=pitch,
-                            duration=tied_duration
-                        )
+                    note_to_add = Note(
+                        pitch=pitch,
+                        duration=tied_duration
+                    )
 
                     if current_time + tied_duration > max_length:
                         part.append(measure)
@@ -143,6 +147,14 @@ def process_notes(part, notes, clef, tempo, no_tempo=False):
     if len(measure) > 0:
         part.append(measure)
 
+# Separate notes for each hand
+right_hand_notes = [note for note in Notes if note.hand == "R"]
+left_hand_notes = [note for note in Notes if note.hand == "L"]
+
+# Process notes for each part, adding the clef to the first measure
+process_notes(part1, right_hand_notes, part1clef)
+process_notes(part2, left_hand_notes, part2clef)
+
 # Function to add whole rests to the part with fewer measures
 def add_whole_rests_to_equalize_measures(part_with_fewer_measures, part_with_more_measures):
     measures_fewer = len(part_with_fewer_measures)
@@ -158,6 +170,11 @@ def add_whole_rests_to_equalize_measures(part_with_fewer_measures, part_with_mor
         new_measure.append(new_rest)
         part_with_fewer_measures.append(new_measure)
 
+# Check the number of measures and equalize if necessary
+if len(part1) < len(part2):
+    add_whole_rests_to_equalize_measures(part1, part2)
+elif len(part1) > len(part2):
+    add_whole_rests_to_equalize_measures(part2, part1)
 
 def convert_musicxml_to_pdf(musicxml_path, pdf_path, musescore_path):
     if not os.path.exists(musicxml_path):
@@ -167,52 +184,32 @@ def convert_musicxml_to_pdf(musicxml_path, pdf_path, musescore_path):
         raise FileNotFoundError(f"MuseScore executable not found: {musescore_path}")
     
     try:
-        env = os.environ.copy()
-        env['DISPLAY'] = ''
-        subprocess.run([musescore_path, "-o", pdf_path, musicxml_path], check=True, start_new_session=True, env=env)
+        subprocess.run([musescore_path, "-o", pdf_path, musicxml_path], check=True)
         print(f"Successfully converted {musicxml_path} to {pdf_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error converting MusicXML file to PDF: {e}")
+        
+def convert_musicxml_to_midi(musicxml_path, midi_path):
+    if not os.path.exists(musicxml_path):
+        raise FileNotFoundError(f"MusicXML file not found: {musicxml_path}")
 
+    try:
+        score = converter.parse(musicxml_path)
+        score.write('midi', fp=midi_path)
+        print(f"Successfully converted {musicxml_path} to {midi_path}")
+    except Exception as e:
+        print(f"Error converting MusicXML to MIDI: {e}")
 
-def export_score(Notes, tempo, title):
-    # Create a score
-    score = Score(title=title.replace(" - Piano Tutorial", ""), composer="Generated by ScoreSnag")
+# Export the score to a MusicXML file
+score.export_to_file("my_music.xml")
 
-    # Create two parts
-    part1 = Part(part_name='P1')
-    part1.instrument_name = "Piano"
-    part2 = Part(part_name='P2')
-    part2.instrument_name = "Piano"
+musicxml_file = "my_music.xml"
+pdf_file = "my_music.pdf"
+musescore_executable = "C:/Program Files/MuseScore 3/bin/MuseScore3.exe"
 
-    # Create clefs for part1 and part2
-    part1clef = Clef(sign="G", line=2)  # Treble clef for part1
-    part2clef = Clef(sign="F", line=4)  # Bass clef for part2
+convert_musicxml_to_pdf(musicxml_file, pdf_file, musescore_executable)
 
-    # Append the parts to the score
-    score.append(part1)
-    score.append(part2)
+midi_file = "my_music.mid"
 
-    # Separate notes for each hand
-    right_hand_notes = [note for note in Notes if note.hand == "R"]
-    left_hand_notes = [note for note in Notes if note.hand == "L"]
-    
-    # Process notes for each part, adding the clef to the first measure
-    process_notes(part1, right_hand_notes, part1clef, tempo)
-    process_notes(part2, left_hand_notes, part2clef, tempo, True)
-
-    # Check the number of measures and equalize if necessary
-    if len(part1) < len(part2):
-        add_whole_rests_to_equalize_measures(part1, part2)
-    elif len(part1) > len(part2):
-        add_whole_rests_to_equalize_measures(part2, part1)
-
-    # TODO: Save to somewhere and have like user things if possible
-    musicxml_file = "output/sheet_music.xml"
-    pdf_file = "output/sheet_music.pdf"
-    musescore_executable = os.getenv("MUSESCORE_EXECUTABLE")
-
-    # Export the score to a MusicXML file
-    score.export_to_file(musicxml_file)
-
-    convert_musicxml_to_pdf(musicxml_file, pdf_file, musescore_executable)
+# Convert MusicXML to MIDI
+convert_musicxml_to_midi(musicxml_file, midi_file)
