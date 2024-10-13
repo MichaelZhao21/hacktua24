@@ -5,23 +5,26 @@ import {
 } from '@mui/material';
 
 import './Split.css'; // Import the CSS file
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import './Split.css';
 import { Typography } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 
+const URL = 'http://localhost:5000';
+
 const Split = () => {
     const [url, setUrl ] = useState('');
     const [maxSeconds, setMax] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true); 
 
     // Send the URL to the Flask backend
-    const response = await fetch('/snatch', {
+    const response = await fetch(`${URL}/snatch`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -34,6 +37,7 @@ const Split = () => {
     if (response.ok) {
       const data = await response.json();
       console.log(data); // Handle the response as needed
+      navigate('/result', { state: { data } });
     } else {
       console.error('Error:', response.statusText);
     }

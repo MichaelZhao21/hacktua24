@@ -31,15 +31,15 @@ def snatch():
     print('Max seconds:', data['maxSeconds'])
 
     if 'tempo' in data:
-        dl_res['tempo'] = data['tempo']
+        dl_res['tempo'] = int(data['tempo'])
 
     # Extract the notes
-    notes = extract_notes(dl_res['file_path'], dl_res['tempo'], data['maxSeconds'])
+    notes = extract_notes(dl_res['file_path'], dl_res['tempo'], int(data['maxSeconds']))
 
     # Export score
     export_score(notes, dl_res['tempo'], dl_res['title'])
 
-    return dl_res['title']
+    return jsonify({"title": dl_res['title']})
 
     
 @app.post("/download")
