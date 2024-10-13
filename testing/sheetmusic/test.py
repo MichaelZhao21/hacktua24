@@ -32,56 +32,90 @@ def split_duration_into_tied_notes(duration):
 
     while duration > 0:
         for value in note_values:
-            if value <= duration + 1e-9:  # Adding a small epsilon for floating-point comparisons
+            # Ensure we only take note values that fit into the remaining duration
+            if value <= duration + 1e-9:  # Adding a small epsilon to avoid floating point issues
                 tied_notes.append(value)
                 duration -= value
                 break
         else:
-            # If we can't fit a whole note, we need to use smaller fractions
-            # To handle fractions gracefully, we will take the smallest value possible (0.25)
-            # but ensure we leave enough duration for larger notes if applicable
-            if duration < 0.25:
-                tied_notes.append(duration)  # Add the remainder as a tiny note
-                duration = 0
-            else:
-                tied_notes.append(.5)  # Always add the smallest note value
-                duration -= 0.5
+            # This happens if none of the note values fit the remaining duration
+            raise ValueError(f"Cannot split duration {duration} into standard note values")
 
     return tied_notes
 
-def process_notes(part1, part2, right_hand_notes, left_hand_notes, part1clef, part2clef):
+def process_notes(part, notes, clef):
     m_number = 1
     max_length = 4
-    measure1 = Measure(number=m_number)
-    measure2 = Measure(number=m_number)
-    current_time1 = 0
-    current_time2 = 0
+    measure = Measure(number=m_number)
+    current_time = 0
 
-    measure1.clef = part1clef
-    measure2.clef = part2clef
+    # Add the clef to the first measure
+    measure.clef = clef
 
-    all_notes = sorted(right_hand_notes + left_hand_notes, key=lambda x: x.start)
+    # Group notes by start time
+    notes_by_start = {}
+    for note in notes:
+        if note.start not in notes_by_start:
+            notes_by_start[note.start] = []
+        notes_by_start[note.start].append(note)
 
-    for note in all_notes:
-        if note in right_hand_notes:
+    # Sort start times
+    start_times = sorted(notes_by_start.keys())
+
+    for start_time in start_times:
+        current_notes = notes_by_start[start_time]
+
+        # Check if there are multiple notes at the same start time (create chord)
+        if len(current_notes) > 1:
+            pitches = []
+            duration = min(note.duration for note in current_notes)  # Use minimum duration
+
+            for note in current_notes:
+                if note.name == "rest":
+                    continue  # Skip rest for chords
+                alteration = 1 if note.sharp else 0
+                pitch = Pitch(step=note.name, octave=note.octave, alteration=alteration)
+                pitches.append(pitch)
+
+            # Create chord if we have valid pitches
+            if pitches:
+                chord_to_add = Chord(pitches=pitches, duration=duration)
+
+                if current_time + duration > max_length:
+                    part.append(measure)
+                    m_number += 1
+                    measure = Measure(number=m_number)
+                    current_time = 0
+
+                measure.append(chord_to_add)
+                current_time += duration
+
+        else:
+            # Single note or rest
+            note = current_notes[0]
+
             if note.name == "rest":
+                # Add a rest for the given duration
                 tied_durations = split_duration_into_tied_notes(note.duration)
 
                 for tied_duration in tied_durations:
                     rest_to_add = Rest(duration=tied_duration)
 
-                    if current_time1 + tied_duration > max_length:
-                        part1.append(measure1)
+                    if current_time + tied_duration > max_length:
+                        part.append(measure)
                         m_number += 1
-                        measure1 = Measure(number=m_number)
-                        current_time1 = 0
+                        measure = Measure(number=m_number)
+                        current_time = 0
 
-                    measure1.append(rest_to_add)
-                    current_time1 += tied_duration
+                    measure.append(rest_to_add)
+                    current_time += tied_duration
 
             else:
+                # Handle regular notes
                 alteration = 1 if note.sharp else 0
                 pitch = Pitch(step=note.name, octave=note.octave, alteration=alteration)
+
+                # Split the duration into tied notes if necessary
                 tied_durations = split_duration_into_tied_notes(note.duration)
 
                 for tied_duration in tied_durations:
@@ -90,82 +124,54 @@ def process_notes(part1, part2, right_hand_notes, left_hand_notes, part1clef, pa
                         duration=tied_duration
                     )
 
-                    if current_time1 + tied_duration > max_length:
-                        part1.append(measure1)
+                    if current_time + tied_duration > max_length:
+                        part.append(measure)
                         m_number += 1
-                        measure1 = Measure(number=m_number)
-                        current_time1 = 0
+                        measure = Measure(number=m_number)
+                        current_time = 0
 
-                    measure1.append(note_to_add)
-                    current_time1 += tied_duration
+                    measure.append(note_to_add)
+                    current_time += tied_duration
 
-        if note in left_hand_notes:
-            if note.name == "rest":
-                tied_durations = split_duration_into_tied_notes(note.duration)
-
-                for tied_duration in tied_durations:
-                    rest_to_add = Rest(duration=tied_duration)
-
-                    if current_time2 + tied_duration > max_length:
-                        part2.append(measure2)
-                        m_number += 1
-                        measure2 = Measure(number=m_number)
-                        current_time2 = 0
-
-                    measure2.append(rest_to_add)
-                    current_time2 += tied_duration
-
-            else:
-                alteration = 1 if note.sharp else 0
-                pitch = Pitch(step=note.name, octave=note.octave, alteration=alteration)
-                tied_durations = split_duration_into_tied_notes(note.duration)
-
-                for tied_duration in tied_durations:
-                    note_to_add = Note(
-                        pitch=pitch,
-                        duration=tied_duration
-                    )
-
-                    if current_time2 + tied_duration > max_length:
-                        part2.append(measure2)
-                        m_number += 1
-                        measure2 = Measure(number=m_number)
-                        current_time2 = 0
-
-                    measure2.append(note_to_add)
-                    current_time2 += tied_duration
-
-        if current_time1 >= max_length or current_time2 >= max_length:
-            if current_time1 < max_length:
-                rest_duration = max_length - current_time1
-                measure1.append(Rest(duration=rest_duration))
-                current_time1 = max_length
-
-            if current_time2 < max_length:
-                rest_duration = max_length - current_time2
-                measure2.append(Rest(duration=rest_duration))
-                current_time2 = max_length
-
-            part1.append(measure1)
-            part2.append(measure2)
+        # Check if we need to start a new measure
+        if current_time >= max_length:
+            part.append(measure)
             m_number += 1
-            measure1 = Measure(number=m_number)
-            measure2 = Measure(number=m_number)
-            current_time1 = 0
-            current_time2 = 0
+            measure = Measure(number=m_number)
+            current_time = 0
 
-    if len(measure1) > 0:
-        part1.append(measure1)
-    if len(measure2) > 0:
-        part2.append(measure2)
-
+    # Append the last measure if it's not empty
+    if len(measure) > 0:
+        part.append(measure)
 
 # Separate notes for each hand
 right_hand_notes = [note for note in Notes if note.hand == "R"]
 left_hand_notes = [note for note in Notes if note.hand == "L"]
 
 # Process notes for each part, adding the clef to the first measure
-process_notes(part1, part2, right_hand_notes, left_hand_notes, part1clef, part2clef)
+process_notes(part1, right_hand_notes, part1clef)
+process_notes(part2, left_hand_notes, part2clef)
+
+# Function to add whole rests to the part with fewer measures
+def add_whole_rests_to_equalize_measures(part_with_fewer_measures, part_with_more_measures):
+    measures_fewer = len(part_with_fewer_measures)
+    measures_more = len(part_with_more_measures)
+
+    # Calculate how many whole rests are needed
+    rests_needed = measures_more - measures_fewer
+
+    # Add whole rests to the part with fewer measures
+    for _ in range(rests_needed):
+        new_measure = Measure(number=len(part_with_fewer_measures) + 1)
+        new_rest = Rest(duration=4)  # Whole rest
+        new_measure.append(new_rest)
+        part_with_fewer_measures.append(new_measure)
+
+# Check the number of measures and equalize if necessary
+if len(part1) < len(part2):
+    add_whole_rests_to_equalize_measures(part1, part2)
+elif len(part1) > len(part2):
+    add_whole_rests_to_equalize_measures(part2, part1)
 
 def convert_musicxml_to_pdf(musicxml_path, pdf_path, musescore_path):
     if not os.path.exists(musicxml_path):
