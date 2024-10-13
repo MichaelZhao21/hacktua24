@@ -13,7 +13,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 const Split = () => {
     const [url, setUrl ] = useState('');
-    const [tempo, setTemp] = useState('');
     const [maxSeconds, setMax] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -27,7 +26,7 @@ const Split = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ url, tempo, maxSeconds }),
+      body: JSON.stringify({ url, maxSeconds }),
     });
 
     setLoading(false);
@@ -79,32 +78,7 @@ const Split = () => {
             }}
           />
           <div className="flex space-x-2">
-          <TextField
-            label="Tempo"
-            variant="outlined"
-            type='number'
-            fullWidth
-            required
-            value={tempo}
-            onChange={(e) => setTemp(e.target.value)}
-            size="small"
-            sx={{
-              '& label': { 
-                  color: 'white',
-                  fontFamily: 'Poppins, sans-serif', // Use the correct font family
-              },
-              '& .MuiOutlinedInput-root': {
-                '& input': { 
-                  color: 'white', // Text color
-                  fontFamily: 'Poppins, sans-serif', // Apply font family here
-                },
-                '& fieldset': { borderColor: 'white' }, // Style for border
-              },
-              '&:hover fieldset': { borderColor: 'white' }, // Border color on hover
-              '&.Mui-focused fieldset': { borderColor: 'white' }, // Border color when focused
-            }}
-          />
-          
+                    
           <TextField
             label="Max Seconds"
             variant="outlined"
