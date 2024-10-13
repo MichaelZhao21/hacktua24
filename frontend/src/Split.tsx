@@ -5,23 +5,26 @@ import {
 } from '@mui/material';
 
 import './Split.css'; // Import the CSS file
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import './Split.css';
 import { Typography } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 
+const URL = 'http://localhost:5000';
+
 const Split = () => {
     const [url, setUrl ] = useState('');
     const [maxSeconds, setMax] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true); 
 
     // Send the URL to the Flask backend
-    const response = await fetch('/snatch', {
+    const response = await fetch(`${URL}/snatch`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -34,6 +37,7 @@ const Split = () => {
     if (response.ok) {
       const data = await response.json();
       console.log(data); // Handle the response as needed
+      navigate('/result', { state: { data } });
     } else {
       console.error('Error:', response.statusText);
     }
@@ -41,11 +45,17 @@ const Split = () => {
 
   return (
     <div>
-        <Button>
-          <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
-            Login
-          </Link>
-        </Button>
+    <Button>
+      <Link to="/login" style={{ 
+        textDecoration: 'none', 
+        color: 'inherit', 
+        fontFamily: 'Poppins', 
+        fontSize: '20px', 
+        fontWeight: 'bold',
+      }}>
+        Login
+      </Link>
+    </Button>
     <div className="h-screen flex split-background">
       {/* Form Section */}
       <div className="flex-1 flex items-center justify-center p-8">
@@ -53,8 +63,8 @@ const Split = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
           <h1 className="text-6xl font-bold text-center text-white mb-4 poppins-bold">ScoreSnag</h1>
-          <h3 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 poppins-bold">Access music anywhere.</h3>
-          <h5 className='text-md font-normal text-center poppins-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'>Just upload the URL of any MIDI YouTube video to get a PDF version of the sheet music.</h5>
+          <h3 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 poppins-bold">Access music anywhere.</h3>
+          <h5 className='text-md font-normal text-center poppins-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600'>Just upload the URL of any MIDI YouTube video to get a PDF version of the sheet music.</h5>
           
           <TextField
             label="YouTube URL"
@@ -66,7 +76,7 @@ const Split = () => {
             sx={{
               '& label': { 
                   color: 'white',
-                  fontFamily: 'Poppins, sans-serif', // Use the correct font family
+                  fontFamily: 'Poppins, sans-serif',
               },
               '& .MuiOutlinedInput-root': {
                 '& input': { 

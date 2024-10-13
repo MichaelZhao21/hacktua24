@@ -55,6 +55,7 @@ const Login = () => {
         </Link>
       </Button>
       <div className="poppins-bold">
+
         <div className="flex flex-col items-center justify-center min-h-screen h-screen split-background">
             <div className="bg-white rounded-md py-10 px-5 ">
           <form onSubmit={handleEmailPasswordSubmit} className=" flex flex-col items-center ">

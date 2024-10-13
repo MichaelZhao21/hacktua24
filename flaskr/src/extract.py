@@ -6,18 +6,26 @@ from collections import namedtuple
 
 Note = namedtuple("Note", ["name", "sharp", "octave", "hand", "start", "end", "duration"])
 
-def extract_notes(file_path):
+fps = 60
+
+def extract_notes(file_path, bpm=100, max_seconds=30):
     vidcap = cv2.VideoCapture(file_path) 
+
+    limit = max_seconds * fps
+    final = None
 
     # Video processing
     count = -1
     rgb_list = [0, 0, 0, 0, 0]
 
-    while count < 200:
+    while count < 1000:
         success, image = vidcap.read()
+        if not success:
+            raise Exception("Video processing failed")
+
         count += 1
 
-        px = image[1050, 30]
+        px = image[image.shape[0] - 30, 30]
         if np.mean(px) < 100:
             continue
         col = np.mean(px)
@@ -31,6 +39,21 @@ def extract_notes(file_path):
         rgb_list[2] = rgb_list[3]
         rgb_list[3] = rgb_list[4]
         rgb_list[4] = col
+    
+    if final is None:
+        raise Exception("Could not find the start of the video")
+    
+    # FIGURE OUT WHERE PIANO IS
+    col = np.mean(final[10][10])
+    i = image.shape[0] // 2
+    while abs(np.mean(final[i][10]) - col) < 10:
+        i += 1
+    print("PIANO TOP AT:", i)
+
+    # Figure out line 2
+    off = (image.shape[0] - i) // 3
+    y = i + off
+    print("PIANO IS AT:", y)
 
     # Keyboard counting
     indexacross = 0
@@ -107,9 +130,6 @@ def extract_notes(file_path):
         ('B', False),
     ]
 
-    # TODO: NEED TO FGIGURE OUT HOW TO ABSTERAC^TLY GFIGURE THIS OUT
-    y = 850
-
     keys = []
     for i, o in enumerate(octaves):
         offset = 12 - len(o)
@@ -125,8 +145,6 @@ def extract_notes(file_path):
     curr_keys = dict()
 
     # Iterate through the rest of the frames
-    # TOOD: Extract
-    limit = 2000
     while success and count < limit:
         success, image = vidcap.read()
         if not success:
@@ -248,10 +266,6 @@ def extract_notes(file_path):
 
     # Sort notes again
     notes.sort(key=lambda x: x.start)
-
-    # TODO: THESE WILL ACTUALLY BE EXPORTEDDDD
-    fps = 60
-    bpm = 136
 
     MIN_REST_TIME = (fps / (bpm / 60)) / 2
     print("Minimum rest time:", MIN_REST_TIME)
