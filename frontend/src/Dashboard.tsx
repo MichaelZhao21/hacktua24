@@ -2,7 +2,7 @@ import React from 'react'
 import "./Split.css";
 import GeneratedMusic from './GeneratedMusic';
 import GeneratedMusic2 from './GeneratedMusic2';
-import GeneratedMusic3 from './GeneratedMusic3';
+import GeneratedMusic3 from './GeneratedMusic3'; // Ensure this file exists in the same directory
 
 function Dashboard() {
   return (

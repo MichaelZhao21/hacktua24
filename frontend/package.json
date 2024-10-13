@@ -15,11 +15,8 @@
     "@mui/material": "^6.1.3",
     "@toolpad/core": "^0.7.0",
     "firebase": "^10.14.1",
-<<<<<<< HEAD
     "ldrs": "^1.0.2",
-=======
     "jspdf": "^2.5.2",
->>>>>>> 5af73033f1a28325c994595ec6adf63cbaf1b526
     "opensheetmusicdisplay": "^1.8.9",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

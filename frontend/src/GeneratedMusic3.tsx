@@ -9,13 +9,13 @@ import Typography from '@mui/material/Typography';
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
 function GeneratedMusic3() {
   const theme = useTheme();
 
   return (
     <div>
-      <h1 className='poppins-bold'>Generated Music</h1>
       <Card sx={{ 
             display: 'flex',
             fontFamily: 'Poppins', 
@@ -29,6 +29,7 @@ function GeneratedMusic3() {
                 fontSize: '20px', 
                 fontWeight: 'bold',
             }}>
+            <InsertDriveFileIcon />
             <Typography component="div" variant="h5">
               Live From Space
             </Typography>
@@ -36,24 +37,7 @@ function GeneratedMusic3() {
               Mac Miller
             </Typography>
           </CardContent>
-          <Box sx={{ display: 'flex', alignItems: 'center', pl: 1, pb: 1 }}>
-            <IconButton aria-label="previous">
-              {theme.direction === 'rtl' ? <SkipNextIcon /> : <SkipPreviousIcon />}
-            </IconButton>
-            <IconButton aria-label="play/pause">
-              <PlayArrowIcon sx={{ height: 38, width: 38 }} />
-            </IconButton>
-            <IconButton aria-label="next">
-              {theme.direction === 'rtl' ? <SkipPreviousIcon /> : <SkipNextIcon />}
-            </IconButton>
-          </Box>
         </Box>
-        <CardMedia
-          component="img"
-          sx={{ width: 151 }}
-          image="/static/images/cards/live-from-space.jpg"
-          alt="Live from space album cover"
-        />
       </Card>
     </div>
   );
