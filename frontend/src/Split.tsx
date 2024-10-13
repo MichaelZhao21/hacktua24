@@ -45,7 +45,6 @@ const Split = () => {
           <h1 className="text-4xl font-bold text-center text-white mb-4 poppins-bold">MIDI Note</h1> {/* Example title */}
 
 
-        <form className="space-y-4 w-full max-w-md">
           <h1 className="text-6xl font-bold text-center text-white mb-4 poppins-bold">ScoreSnag</h1>
           <h3 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 poppins-bold">Access music anywhere.</h3>
           <h5 className='text-md font-normal text-center poppins-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'>Just upload the URL of any MIDI YouTube video to get a PDF version of the sheet music.</h5>
