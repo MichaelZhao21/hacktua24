@@ -125,7 +125,9 @@ def extract_notes(file_path):
     curr_keys = dict()
 
     # Iterate through the rest of the frames
-    while success and count < 2000:
+    # TOOD: Extract
+    limit = 2000
+    while success and count < limit:
         success, image = vidcap.read()
         if not success:
             break
