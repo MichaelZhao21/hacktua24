@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import { Link } from 'react-router-dom';
 import {
     TextField,
     Button
@@ -6,6 +7,10 @@ import {
 
 const Split = () => {
   return (
+    <div>
+    <Button>
+        <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</Link>
+      </Button>
     <div className="h-screen flex">
       {/* Form Section */}
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-100">
@@ -56,6 +61,7 @@ const Split = () => {
         />
       </div>*/}
       
+    </div>
     </div>
   );
 };
