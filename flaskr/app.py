@@ -51,7 +51,7 @@ def download():
     return jsonify(data)
 
 
-@app.post("/xml")
+@app.get("/xml")
 def xml():
     # Send the SXMLFKejwufh bnwejfuhiwer
     return send_file("output/sheet_music.xml", as_attachment=True)
