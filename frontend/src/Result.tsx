@@ -1,6 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
-import './Result.css'; // Import the CSS file for styles
+import React, { useEffect, useRef, useState } from "react";
+import { OpenSheetMusicDisplay } from "opensheetmusicdisplay";
+import "./Result.css"; // Import the CSS file for styles
+import "./Split.css"; // Import the CSS file
+import Navbar from "./Navbar";
+import { Button } from "@mui/material";
+
+import { Link } from "react-router-dom";
 
 interface ResultProps {
   xmlPath: string;
@@ -9,7 +14,10 @@ interface ResultProps {
 const Result: React.FC<ResultProps> = ({ xmlPath }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const osmdRef = useRef<OpenSheetMusicDisplay | null>(null);
-  const [containerSize, setContainerSize] = useState({ width: '200%', height: 'auto' });
+  const [containerSize, setContainerSize] = useState({
+    width: "125%",
+    height: "auto",
+  });
 
   useEffect(() => {
     const loadAndRender = async () => {
@@ -26,13 +34,16 @@ const Result: React.FC<ResultProps> = ({ xmlPath }) => {
           osmdRef.current.render();
 
           // After rendering, get the actual size of the content
-          const svgElement = containerRef.current.querySelector('svg');
+          const svgElement = containerRef.current.querySelector("svg");
           if (svgElement) {
             const { width, height } = svgElement.getBoundingClientRect();
-            setContainerSize({ width: `${width}px`, height: `${height}px` });
+            setContainerSize({
+              width: `${width * 0.75}px`,
+              height: `${height * 0.75}px`,
+            });
           }
         } catch (error) {
-          console.error('Error loading or rendering MusicXML file:', error);
+          console.error("Error loading or rendering MusicXML file:", error);
         }
       }
     };
@@ -46,9 +57,24 @@ const Result: React.FC<ResultProps> = ({ xmlPath }) => {
   }, [xmlPath]);
 
   return (
-    <div className="page-container">
-      <div className="floating-card" style={containerSize}> {/* Dynamic card size */}
-        <div ref={containerRef} className="music-display" /> {/* The container for OSMD */}
+    <div className="split-background h-full w-full">
+      <div className="page-container bg-transparent flex flex-col items-center">
+        <Navbar />
+        <div className="floating-card" style={containerSize}>
+          {" "}
+          {/* Dynamic card size */}
+          <div ref={containerRef} className="music-display" />{" "}
+          {/* The container for OSMD */}
+        </div>
+        <Button
+          variant="contained"
+          color="primary"
+          sx={{ fontSize: "18px", fontFamily: "Poppins" }} // Adjust font size here
+          component={Link}
+          to="/"
+        >
+          Generate Another
+        </Button>
       </div>
     </div>
   );

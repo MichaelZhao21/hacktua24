@@ -3,7 +3,6 @@
 .page-container {
     display: flex;
     justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
     height: 100vh; /* Full viewport height */
     background-color: #f0f0f0; /* Optional: background color */
     padding: 20px; /* Padding to avoid card hitting screen edges */
@@ -11,16 +10,12 @@
   
   .floating-card {
     background-color: #fff; /* White background */
+    margin-top: 4rem;
+    margin-bottom: 1rem;
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Soft shadow for floating effect */
     padding: 20px; /* Space inside the card */
-    overflow: hidden; /* Ensure no overflow */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover transition */
-  }
-  
-  .floating-card:hover {
-    transform: translateY(-10px); /* Float effect on hover */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+    overflow: scroll; /* Ensure no overflow */
   }
   
   .music-display {
