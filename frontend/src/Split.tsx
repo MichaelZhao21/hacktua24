@@ -10,8 +10,12 @@ import SendIcon from "@mui/icons-material/Send"; // Send icon resembles a paper 
 
 import "./Split.css";
 import { Typography } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
 import { styled } from "@mui/material/styles";
+import { ring } from 'ldrs'
+
+ring.register()
+
+// Default values shown
 
 const SquareFilledButton = styled(IconButton)(({ theme }) => ({
   width: "48px", // Adjust the size as needed
@@ -181,7 +185,16 @@ const Split = () => {
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
               <Typography variant="h6" color="white">
+                <div className="flex flex-col">
+              <l-ring
+                    size="40"
+                    stroke="5"
+                    bg-opacity="0"
+                    speed="2" 
+                    color="black" 
+                    ></l-ring>
                 Loading...
+                </div>
               </Typography>
             </div>
           )}
