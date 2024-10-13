@@ -50,10 +50,16 @@ const Login = () => {
   return (
     <div>
       <Button>
-        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          ScoreSnag
-        </Link>
-      </Button>
+      <Link to="/" style={{ 
+        textDecoration: 'none', 
+        color: 'inherit', 
+        fontFamily: 'Poppins', 
+        fontSize: '20px', 
+        fontWeight: 'bold',
+      }}>
+        Score Snag
+      </Link>
+    </Button>
       <div className="poppins-bold">
 
         <div className="flex flex-col items-center justify-center min-h-screen h-screen split-background">
