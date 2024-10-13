@@ -51,15 +51,10 @@ def download():
     return jsonify(data)
 
 
-@app.post("/xml")
+@app.get("/xml")
 def xml():
-    # Send the XML file as a string
-    
-    # Read the XML file
-    with open("output/sheet_music.xml", "r") as f:
-        xml = f.read()
-
-    return xml
+    # Send the SXMLFKejwufh bnwejfuhiwer
+    return send_file("output/sheet_music.xml", as_attachment=True)
 
 
 @app.post("/pdf")
