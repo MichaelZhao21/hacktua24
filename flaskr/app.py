@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask import render_template, request
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -49,6 +49,23 @@ def download():
     data = download_video(url)
 
     return jsonify(data)
+
+
+@app.post("/xml")
+def xml():
+    # Send the XML file as a string
+    
+    # Read the XML file
+    with open("output/sheet_music.xml", "r") as f:
+        xml = f.read()
+
+    return xml
+
+
+@app.post("/pdf")
+def pdf():
+    # Send the PDF file
+    return send_file("output/sheet_music.pdf", as_attachment=True)
 
 
 if __name__ == "__main__":
