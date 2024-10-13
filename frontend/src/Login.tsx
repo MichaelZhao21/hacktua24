@@ -43,7 +43,7 @@ const Login = () => {
 
   return (
     <div>
-      <Button>
+      <Button className='poppins-bold'>
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           ScoreSnag
         </Link>
