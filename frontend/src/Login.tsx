@@ -5,6 +5,7 @@ import { useTheme } from '@mui/material/styles';
 import { getAuth, signInWithPopup, GoogleAuthProvider, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 import { blue } from '@mui/material/colors';
+import Navbar from './Navbar';
 
 const Login = () => {
   const theme = useTheme();
@@ -49,11 +50,7 @@ const Login = () => {
 
   return (
     <div>
-      <Button>
-        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          ScoreSnag
-        </Link>
-      </Button>
+      <Navbar />
       <div className="poppins-bold">
 
         <div className="flex flex-col items-center justify-center min-h-screen h-screen split-background">

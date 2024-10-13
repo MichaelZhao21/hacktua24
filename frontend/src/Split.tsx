@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { TextField, Button } from "@mui/material";
+import { TextField } from "@mui/material";
 
 import "./Split.css"; // Import the CSS file
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import IconButton from "@mui/material/IconButton";
 
@@ -12,6 +12,7 @@ import "./Split.css";
 import { Typography } from "@mui/material";
 import CircularProgress from "@mui/material/CircularProgress";
 import { styled } from "@mui/material/styles";
+import Navbar from "./Navbar";
 
 const SquareFilledButton = styled(IconButton)(({ theme }) => ({
   width: "48px", // Adjust the size as needed
@@ -58,22 +59,7 @@ const Split = () => {
 
   return (
     <div>
-      <div className="fixed top-0 left-0 bg-white w-full">
-        <Button>
-          <Link
-            to="/login"
-            style={{
-              textDecoration: "none",
-              color: "inherit",
-              fontFamily: "Poppins",
-              fontSize: "20px",
-              fontWeight: "bold",
-            }}
-          >
-            Login
-          </Link>
-        </Button>
-      </div>
+      <Navbar />
       <div className="h-screen flex split-background">
         {/* Form Section */}
         <div className="flex-1 flex items-center justify-center">
