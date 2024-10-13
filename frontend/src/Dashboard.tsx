@@ -1,6 +1,8 @@
 import React from 'react'
 import "./Split.css";
 import GeneratedMusic from './GeneratedMusic';
+import GeneratedMusic2 from './GeneratedMusic2';
+import GeneratedMusic3 from './GeneratedMusic3'; // Ensure this file exists in the same directory
 
 function Dashboard() {
   return (
@@ -11,6 +13,8 @@ function Dashboard() {
         </div>
         <div className='m-4'>
             <GeneratedMusic />
+            <GeneratedMusic2 />
+            <GeneratedMusic3 />
         </div>
     </div>
     

@@ -11,7 +11,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import SkipNextIcon from '@mui/icons-material/SkipNext';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 
-function GeneratedMusic() {
+function GeneratedMusic3() {
   const theme = useTheme();
 
   return (
@@ -43,4 +43,4 @@ function GeneratedMusic() {
   );
 }
 
-export default GeneratedMusic;
+export default GeneratedMusic3;

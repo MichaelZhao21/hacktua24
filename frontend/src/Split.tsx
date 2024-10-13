@@ -10,9 +10,13 @@ import SendIcon from "@mui/icons-material/Send"; // Send icon resembles a paper 
 
 import "./Split.css";
 import { Typography } from "@mui/material";
-import CircularProgress from "@mui/material/CircularProgress";
 import { styled } from "@mui/material/styles";
 import Navbar from "./Navbar";
+import { ring } from "ldrs";
+
+ring.register();
+
+// Default values shown
 
 const SquareFilledButton = styled(IconButton)(({ theme }) => ({
   width: "48px", // Adjust the size as needed
@@ -121,7 +125,7 @@ const Split = () => {
                 className="bg-primary hover:bg-primary text-white font-bold py-2 px-4 rounded font-sans"
                 disabled={loading}
               >
-                {loading ? <CircularProgress size={24} /> : <SendIcon />}
+                <SendIcon />
               </SquareFilledButton>
             </div>
             <div className="flex flex-col items-center pt-2">
@@ -167,7 +171,16 @@ const Split = () => {
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
               <Typography variant="h6" color="white">
-                Loading...
+                <div className="flex flex-col">
+                  <l-ring
+                    size="40"
+                    stroke="5"
+                    bg-opacity="0"
+                    speed="2"
+                    color="black"
+                  ></l-ring>
+                  Loading...
+                </div>
               </Typography>
             </div>
           )}
