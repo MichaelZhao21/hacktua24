@@ -1,9 +1,17 @@
 from flask import Flask
 from flask import render_template, request
+from flask_cors import CORS
+from dotenv import load_dotenv
+
 from src.download import download_video
 from src.extract import extract_notes
+from src.score import export_score
+
+load_dotenv()
+
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def index():
@@ -18,7 +26,9 @@ def snatch():
 
     # Extract the notes
     notes = extract_notes(name)
-    print(notes)
+
+    # Export score
+    export_score(notes)
 
     return name
 

@@ -6,10 +6,33 @@ import {
 import './Split.css';
 
 const Split = () => {
+    const [url, setUrl] = useState('');
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    // Send the URL to the Flask backend
+    const response = await fetch('/snatch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data); // Handle the response as needed
+    } else {
+      console.error('Error:', response.statusText);
+    }
+  };
+
   return (
     <div className="h-screen flex split-background">
       {/* Form Section */}
       <div className="flex-1 flex items-center justify-center p-8">
+
         <form className="space-y-4 w-full max-w-md">
           <h1 className="text-6xl font-bold text-center text-white mb-4 poppins-bold">ScoreSnag</h1>
           <h3 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 poppins-bold">Access music anywhere.</h3>
@@ -20,6 +43,8 @@ const Split = () => {
             variant="outlined"
             fullWidth
             required
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
             sx={{
               '& label': { 
                   color: 'white',

@@ -3,29 +3,8 @@ from collections import namedtuple
 from music21 import converter
 import subprocess
 import os
-import note_data
 
 Noted = namedtuple("Noted", ["name", "sharp", "octave", "hand", "start", "end", "duration"])
-
-# Define the notes
-Notes = note_data.notes
-
-# Create a score
-score = Score(title="My Composition")
-
-# Create two parts
-part1 = Part(part_name='P1')
-part1.instrument_name = "Piano"
-part2 = Part(part_name='P2')
-part2.instrument_name = "Piano"
-
-# Create clefs for part1 and part2
-part1clef = Clef(sign="G", line=2)  # Treble clef for part1
-part2clef = Clef(sign="F", line=4)  # Bass clef for part2
-
-# Append the parts to the score
-score.append(part1)
-score.append(part2)
 
 def split_duration_into_tied_notes(duration):
     # Define the note values for common durations
@@ -147,14 +126,6 @@ def process_notes(part, notes, clef):
     if len(measure) > 0:
         part.append(measure)
 
-# Separate notes for each hand
-right_hand_notes = [note for note in Notes if note.hand == "R"]
-left_hand_notes = [note for note in Notes if note.hand == "L"]
-
-# Process notes for each part, adding the clef to the first measure
-process_notes(part1, right_hand_notes, part1clef)
-process_notes(part2, left_hand_notes, part2clef)
-
 # Function to add whole rests to the part with fewer measures
 def add_whole_rests_to_equalize_measures(part_with_fewer_measures, part_with_more_measures):
     measures_fewer = len(part_with_fewer_measures)
@@ -170,11 +141,6 @@ def add_whole_rests_to_equalize_measures(part_with_fewer_measures, part_with_mor
         new_measure.append(new_rest)
         part_with_fewer_measures.append(new_measure)
 
-# Check the number of measures and equalize if necessary
-if len(part1) < len(part2):
-    add_whole_rests_to_equalize_measures(part1, part2)
-elif len(part1) > len(part2):
-    add_whole_rests_to_equalize_measures(part2, part1)
 
 def convert_musicxml_to_pdf(musicxml_path, pdf_path, musescore_path):
     if not os.path.exists(musicxml_path):
@@ -189,11 +155,45 @@ def convert_musicxml_to_pdf(musicxml_path, pdf_path, musescore_path):
     except subprocess.CalledProcessError as e:
         print(f"Error converting MusicXML file to PDF: {e}")
 
-# Export the score to a MusicXML file
-score.export_to_file("my_music.xml")
 
-musicxml_file = "my_music.xml"
-pdf_file = "my_music.pdf"
-musescore_executable = "C:/Program Files/MuseScore 3/bin/MuseScore3.exe"
+def export_score(Notes):
+    # Create a score
+    score = Score(title="My Composition")
 
-convert_musicxml_to_pdf(musicxml_file, pdf_file, musescore_executable)
+    # Create two parts
+    part1 = Part(part_name='P1')
+    part1.instrument_name = "Piano"
+    part2 = Part(part_name='P2')
+    part2.instrument_name = "Piano"
+
+    # Create clefs for part1 and part2
+    part1clef = Clef(sign="G", line=2)  # Treble clef for part1
+    part2clef = Clef(sign="F", line=4)  # Bass clef for part2
+
+    # Append the parts to the score
+    score.append(part1)
+    score.append(part2)
+
+    # Separate notes for each hand
+    right_hand_notes = [note for note in Notes if note.hand == "R"]
+    left_hand_notes = [note for note in Notes if note.hand == "L"]
+    
+    # Process notes for each part, adding the clef to the first measure
+    process_notes(part1, right_hand_notes, part1clef)
+    process_notes(part2, left_hand_notes, part2clef)
+
+    # Check the number of measures and equalize if necessary
+    if len(part1) < len(part2):
+        add_whole_rests_to_equalize_measures(part1, part2)
+    elif len(part1) > len(part2):
+        add_whole_rests_to_equalize_measures(part2, part1)
+
+    # TODO: Save to somewhere and have like user things if possible
+    musicxml_file = "output/sheet_music.xml"
+    pdf_file = "output/sheet_music.pdf"
+    musescore_executable = os.getenv("MUSESCORE_EXECUTABLE")
+
+    # Export the score to a MusicXML file
+    score.export_to_file(musicxml_file)
+
+    convert_musicxml_to_pdf(musicxml_file, pdf_file, musescore_executable)

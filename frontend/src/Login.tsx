@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { AuthProvider, AppProvider, SignInPage } from '@toolpad/core';
 import { useTheme } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 // preview-start
 const providers: AuthProvider[] = [
   { id: 'github' as 'github', name: 'GitHub' },
@@ -34,6 +36,14 @@ export default function Login() {
         />
       </div>
       </AppProvider>
+    <div>
+    <Button>
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Hack Tua</Link>
+    </Button>
+    <AppProvider theme={theme}>
+      <SignInPage signIn={signIn} providers={providers} />
+    </AppProvider>
+
     </div>
   );
 }
