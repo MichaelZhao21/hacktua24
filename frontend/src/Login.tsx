@@ -25,6 +25,12 @@ const signIn: (provider: AuthProvider) => void = async (provider) => {
 export default function Login() {
   const theme = useTheme();
   return (
+    <div>
+    <Button>
+          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+            ScoreSnatch
+          </Link>
+    </Button>
     <div className="poppins-bold">
       <AppProvider theme={theme}>
         <div className="flex flex-col items-center justify-center min-h-screen h-screen split-background">
@@ -38,15 +44,8 @@ export default function Login() {
         </div>
       </AppProvider>
       <div>
-        <Button>
-          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-            Hack Tua
-          </Link>
-        </Button>
-        <AppProvider theme={theme}>
-          <SignInPage signIn={signIn} providers={providers} />
-        </AppProvider>
       </div>
+    </div>
     </div>
   );
 }
