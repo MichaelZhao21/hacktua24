@@ -57,7 +57,8 @@ def extract_notes(video_path: str) -> Note:
     while count < 1000:
         success, image = vidcap.read()
         if not success:
-            break
+            vidcap.release()
+            raise Exception('[ERROR] Could not find the start of the video -- no frames found')
         count += 1
 
         px = image[1050, 30]
@@ -268,7 +269,51 @@ def extract_notes(video_path: str) -> Note:
 
     # TODO: Change
     fps = 60
-    bpm = 75
+    bpm = 136
+
+    MIN_REST_TIME = (fps / (bpm / 60)) / 2
+    print("Minimum rest time:", MIN_REST_TIME)
+
+    # AAAAAAA
+    # COMBINE THE MOTHER FUCKIN RESTS BRUH
+
+    left_list = list(filter(lambda x: x.hand == 'L', notes))
+    right_list = list(filter(lambda x: x.hand == 'R', notes))
+
+    new_left_list = []
+    new_right_list = []
+
+    # Remove all rests and increase duration of previous note to extend to the rest
+    def combine_rests(note_list):
+        new_note_list = []
+        prev_note = None
+
+        for note in note_list:
+            if note.name == 'rest' and note.duration < MIN_REST_TIME:
+                # If it's a rest and shorter than the MIN_REST_TIME, extend the previous note's end
+                if prev_note is not None:
+                    prev_note = Note(prev_note.name, prev_note.sharp, prev_note.octave, prev_note.hand, prev_note.start, note.end, prev_note.duration + (note.end - prev_note.end))
+            else:
+                # If the previous note exists (and wasn't a rest), add it to the new list
+                if prev_note:
+                    new_note_list.append(prev_note)
+                prev_note = note  # Update the previous note to the current one
+
+        # Append the last remaining note (which was not added inside the loop)
+        if prev_note:
+            new_note_list.append(prev_note)
+
+        return new_note_list
+
+    # Process left and right hand note lists
+    new_left_list = combine_rests(left_list)
+    new_right_list = combine_rests(right_list)
+
+    # Create a new notes list
+    notes = new_left_list + new_right_list
+
+    # Sort for another damn time
+    notes.sort(key=lambda x: x.start)
 
     def to_beats(x):
         frame_duration = x.duration / fps
