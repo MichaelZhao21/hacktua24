@@ -5,11 +5,14 @@ import {
     Button
   } from '@mui/material';
 
-const Split = () => {
+const Split: React.FC = () => {
+
+
+    
   return (
     <div>
     <Button>
-        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Hack Tua</Link>
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Score Snag</Link>
     </Button>
     <Button>
         <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</Link>
