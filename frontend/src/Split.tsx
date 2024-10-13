@@ -6,9 +6,28 @@ import {
   } from '@mui/material';
 
 const Split: React.FC = () => {
-
-
+    const [url, setUrl] = useState('');
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
     
+        // Send the URL to the Flask backend
+        const response = await fetch('/snatch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url }),
+        });
+    
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data); // Handle the response as needed
+        } else {
+          console.error('Error:', response.statusText);
+        }
+      };
+
+
   return (
     <div>
     <Button>
@@ -20,12 +39,14 @@ const Split: React.FC = () => {
     <div className="h-screen flex">
       {/* Form Section */}
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-100">
-        <form className="space-y-4 w-full max-w-md">
+        <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
           <TextField
             label="YouTube URL"
             variant="outlined"
             fullWidth
             required
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
           />
           <TextField
             label="Time Signature"
