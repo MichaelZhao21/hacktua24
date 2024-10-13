@@ -152,6 +152,27 @@ left_hand_notes = [note for note in Notes if note.hand == "L"]
 process_notes(part1, right_hand_notes, part1clef)
 process_notes(part2, left_hand_notes, part2clef)
 
+# Function to add whole rests to the part with fewer measures
+def add_whole_rests_to_equalize_measures(part_with_fewer_measures, part_with_more_measures):
+    measures_fewer = len(part_with_fewer_measures)
+    measures_more = len(part_with_more_measures)
+
+    # Calculate how many whole rests are needed
+    rests_needed = measures_more - measures_fewer
+
+    # Add whole rests to the part with fewer measures
+    for _ in range(rests_needed):
+        new_measure = Measure(number=len(part_with_fewer_measures) + 1)
+        new_rest = Rest(duration=4)  # Whole rest
+        new_measure.append(new_rest)
+        part_with_fewer_measures.append(new_measure)
+
+# Check the number of measures and equalize if necessary
+if len(part1) < len(part2):
+    add_whole_rests_to_equalize_measures(part1, part2)
+elif len(part1) > len(part2):
+    add_whole_rests_to_equalize_measures(part2, part1)
+
 def convert_musicxml_to_pdf(musicxml_path, pdf_path, musescore_path):
     if not os.path.exists(musicxml_path):
         raise FileNotFoundError(f"MusicXML file not found: {musicxml_path}")
