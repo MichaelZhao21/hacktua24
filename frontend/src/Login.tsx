@@ -1,7 +1,7 @@
 import { AuthProvider, AppProvider, SignInPage } from "@toolpad/core";
 import { useTheme } from "@mui/material/styles";
 import Button from "@mui/material/Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";  // Import useNavigate
 // preview-start
 const providers: AuthProvider[] = [
   { id: "github" as "github", name: "GitHub" },
@@ -12,40 +12,44 @@ const providers: AuthProvider[] = [
 ];
 import "./Split.css";
 
-const signIn: (provider: AuthProvider) => void = async (provider) => {
-  const promise = new Promise<void>((resolve) => {
-    setTimeout(() => {
-      console.log(`Sign in with ${provider.id}`);
-      resolve();
-    }, 500);
-  });
-  return promise;
-};
-
 export default function Login() {
   const theme = useTheme();
+  const navigate = useNavigate();  // Initialize useNavigate
+
+  const signIn: (provider: AuthProvider) => void = async (provider) => {
+    const promise = new Promise<void>((resolve) => {
+      setTimeout(() => {
+        console.log(`Sign in with ${provider.id}`);
+        resolve();
+        if (provider.id === 'github') {  // Check if GitHub is selected
+          navigate("/dashboard");  // Redirect to the /dashboard route
+        }
+      }, 500);
+    });
+    return promise;
+  };
+
   return (
-    <div className="poppins-bold">
-      <AppProvider theme={theme}>
-        <div className="flex flex-col items-center justify-center min-h-screen h-screen split-background">
-          {" "}
-          {/* Background and flexbox for centering */}
-          <SignInPage
-            signIn={signIn}
-            providers={providers}
-            className="bg-white shadow-md rounded-lg p-6" // Styling for the SignInPage component
-          />
-        </div>
-      </AppProvider>
+    <div className="min-h-screen h-screen split-background">
       <div>
-        <Button>
-          <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-            Hack Tua
-          </Link>
-        </Button>
-        <AppProvider theme={theme}>
-          <SignInPage signIn={signIn} providers={providers} />
-        </AppProvider>
+        <div className="bg-white">
+          <Button>
+            <Link to="/" style={{
+              textDecoration: 'none', 
+              color: 'inherit', 
+              fontFamily: 'Poppins', 
+              fontSize: '20px', 
+              fontWeight: 'bold',
+            }}>
+              Hack Tua
+            </Link>
+          </Button>
+        </div>
+        <div className="font-bold" style={{ fontFamily: 'Poppins, sans-serif' }}>
+          <AppProvider theme={theme}>
+            <SignInPage signIn={signIn} providers={providers} />
+          </AppProvider>
+        </div>
       </div>
     </div>
   );

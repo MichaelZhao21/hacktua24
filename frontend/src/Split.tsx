@@ -35,7 +35,15 @@ const Split = () => {
   return (
     <div>
     <Button>
-        <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</Link>
+      <Link to="/login" style={{ 
+        textDecoration: 'none', 
+        color: 'inherit', 
+        fontFamily: 'Poppins', 
+        fontSize: '20px', 
+        fontWeight: 'bold',
+      }}>
+        Login
+      </Link>
     </Button>
     <div className="h-screen flex split-background">
       {/* Form Section */}
@@ -43,8 +51,8 @@ const Split = () => {
 
         <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
           <h1 className="text-6xl font-bold text-center text-white mb-4 poppins-bold">ScoreSnag</h1>
-          <h3 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 poppins-bold">Access music anywhere.</h3>
-          <h5 className='text-md font-normal text-center poppins-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'>Just upload the URL of any MIDI YouTube video to get a PDF version of the sheet music.</h5>
+          <h3 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 poppins-bold">Access music anywhere.</h3>
+          <h5 className='text-md font-normal text-center poppins-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600'>Just upload the URL of any MIDI YouTube video to get a PDF version of the sheet music.</h5>
           
           <TextField
             label="YouTube URL"
@@ -56,7 +64,7 @@ const Split = () => {
             sx={{
               '& label': { 
                   color: 'white',
-                  fontFamily: 'Poppins, sans-serif', // Use the correct font family
+                  fontFamily: 'Poppins, sans-serif',
               },
               '& .MuiOutlinedInput-root': {
                 '& input': { 
