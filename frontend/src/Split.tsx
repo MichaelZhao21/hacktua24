@@ -135,7 +135,7 @@ const Split = () => {
                 className="bg-primary hover:bg-primary text-white font-bold py-2 px-4 rounded font-sans"
                 disabled={loading}
               >
-                {loading ? <CircularProgress size={24} /> : <SendIcon />}
+                <SendIcon />
               </SquareFilledButton>
             </div>
             <div className="flex flex-col items-center pt-2">

@@ -20,7 +20,7 @@ const Login = () => {
       const result = await signInWithPopup(auth, provider);
       console.log('User signed in:', result.user);
       // Handle successful sign-in here (e.g., redirect to another page)
-      navigate('/');
+      navigate('/dashboard');
     } catch (error) {
       console.error('Error signing in with Google:', error);
     }
@@ -32,7 +32,7 @@ const Login = () => {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         console.log('User registered:', userCredential.user);
-        navigate('/');
+        navigate('/dashboard');
       } catch (error) {
         console.error('Error registering:', error);
       }
@@ -40,7 +40,7 @@ const Login = () => {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         console.log('User signed in:', userCredential.user);
-        navigate('/');
+        navigate('/dashboard');
       } catch (error) {
         console.error('Error signing in:', error);
       }
