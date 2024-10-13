@@ -7,3 +7,4 @@
 # ADD GENERATED THINGS FROM TESTING HERE
 # Frames from testing
 testing/frames
+**/downloads
