@@ -24,12 +24,12 @@ def download_video(url: str) -> str:
 
             # Get the tempo
             mnotes_url = extract_mnotes_url(description)
+            tempo = 100
             if mnotes_url:
                 mnotes_page = get_webpage('https://' + mnotes_url)
                 tempo = extract_number(mnotes_page)
-
-            if not tempo:
-                tempo = 100
+                if not tempo:
+                    tempo = 100
             
             
             # Return the title, description, and file path
@@ -39,7 +39,7 @@ def download_video(url: str) -> str:
                 'file_path': file_path
             }
     except Exception as e:
-        return f"Error: {e}"
+        raise Exception(f"An error occurred: {e}")
 
 
 def extract_number(s):

@@ -30,11 +30,14 @@ def snatch():
     print('Tempo:', dl_res['tempo'])
     print('Max seconds:', data['maxSeconds'])
 
+    if 'tempo' in data:
+        dl_res['tempo'] = data['tempo']
+
     # Extract the notes
     notes = extract_notes(dl_res['file_path'], dl_res['tempo'], data['maxSeconds'])
 
     # Export score
-    export_score(notes, dl_res['tempo'])
+    export_score(notes, dl_res['tempo'], dl_res['title'])
 
     return dl_res['title']
 
