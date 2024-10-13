@@ -7,7 +7,7 @@ import './Split.css'; // Import the CSS file
 
 const Split = () => {
   return (
-    <div className="h-screen flex">
+    <div className="h-screen flex split-background">
       {/* Form Section */}
       <div className="flex-1 flex items-center justify-center p-8">
         <form className="space-y-4 w-full max-w-md">
