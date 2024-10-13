@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import Router components
 import Split from './Split';
-import Login from './Login'; // Make sure to import Login component if it's defined
+import Login from './Login';
 
 function App() {
   return (

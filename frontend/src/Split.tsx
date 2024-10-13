@@ -3,7 +3,7 @@ import {
     TextField,
     Button
 } from '@mui/material';
-import './Split.css'; // Import the CSS file
+import './Split.css';
 
 const Split = () => {
     const [url, setUrl] = useState('');
@@ -32,8 +32,11 @@ const Split = () => {
     <div className="h-screen flex split-background">
       {/* Form Section */}
       <div className="flex-1 flex items-center justify-center p-8">
-        <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
-          <h1 className="text-4xl font-bold text-center text-white mb-4 poppins-bold">MIDI Note</h1> {/* Example title */}
+
+        <form className="space-y-4 w-full max-w-md">
+          <h1 className="text-6xl font-bold text-center text-white mb-4 poppins-bold">ScoreSnag</h1>
+          <h3 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 poppins-bold">Access music anywhere.</h3>
+          <h5 className='text-md font-normal text-center poppins-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500'>Just upload the URL of any MIDI YouTube video to get a PDF version of the sheet music.</h5>
           
           <TextField
             label="YouTube URL"
@@ -129,7 +132,7 @@ const Split = () => {
             variant="contained"
             color="primary"
             fullWidth
-            className="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-4 rounded font-sans"
+            className="bg-primary hover:bg-primary text-white font-bold py-2 px-4 rounded font-sans"
           >
             Submit
           </Button>
