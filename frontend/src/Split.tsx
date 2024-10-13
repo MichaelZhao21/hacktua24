@@ -9,6 +9,9 @@ const Split = () => {
   return (
     <div>
     <Button>
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Hack Tua</Link>
+    </Button>
+    <Button>
         <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</Link>
     </Button>
     <div className="h-screen flex">
