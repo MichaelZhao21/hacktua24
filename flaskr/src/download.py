@@ -7,7 +7,12 @@ def download_video(url: str) -> str:
     }
     try:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            # Extract video information first
+            info_dict = ydl.extract_info(url, download=False)
+            # Prepare the file path
+            file_path = ydl.prepare_filename(info_dict)
+            # Now download the video
             ydl.download([url])
-            return f"Downloaded {ydl.extract_info(url, download=False)['title']}"
+            return file_path
     except Exception as e:
         return f"Error: {e}"
