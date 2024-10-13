@@ -169,3 +169,10 @@ body {
     width: 100vw; /* Ensure it covers the full width of the viewport */
   }
   
+  .signin-header {
+    @apply text-2xl font-bold text-blue-500; /* Using Tailwind's @apply directive */
+  }
+
+  .signin-description {
+    @apply text-sm text-gray-600; /* Using Tailwind's @apply directive */
+  }
