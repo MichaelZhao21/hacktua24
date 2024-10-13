@@ -50,6 +50,8 @@ def process_notes(part, notes, clef):
     max_length = 4
     measure = Measure(number=m_number)
     current_time = 0
+    tempo = MetronomeMark(beat_length=1.0, bpm=120)
+    added_tempo = False
 
     # Add the clef to the first measure
     measure.clef = clef
@@ -82,16 +84,34 @@ def process_notes(part, notes, clef):
 
             # Create chord if we have valid pitches
             if pitches:
-                chord_to_add = Chord(pitches=pitches, duration=duration)
+                # Consider durations too (split into tied notes)
+                tied_durations = split_duration_into_tied_notes(duration)
+                for tied_duration in tied_durations:
+                    if not added_tempo:
+                        chord_to_add = Chord(pitches=pitches, duration=tied_duration, directions=tempo)
+                        added_tempo = True
+                    else:
+                        chord_to_add = Chord(pitches=pitches, duration=tied_duration)
 
-                if current_time + duration > max_length:
-                    part.append(measure)
-                    m_number += 1
-                    measure = Measure(number=m_number)
-                    current_time = 0
+                    if current_time + tied_duration > max_length:
+                        part.append(measure)
+                        m_number += 1
+                        measure = Measure(number=m_number)
+                        current_time = 0
 
-                measure.append(chord_to_add)
-                current_time += duration
+                    measure.append(chord_to_add)
+                    current_time += tied_duration
+
+                # chord_to_add = Chord(pitches=pitches, duration=duration)
+
+                # if current_time + duration > max_length:
+                #     part.append(measure)
+                #     m_number += 1
+                #     measure = Measure(number=m_number)
+                #     current_time = 0
+
+                # measure.append(chord_to_add)
+                # current_time += duration
 
         else:
             # Single note or rest
@@ -122,10 +142,18 @@ def process_notes(part, notes, clef):
                 tied_durations = split_duration_into_tied_notes(note.duration)
 
                 for tied_duration in tied_durations:
-                    note_to_add = Note(
-                        pitch=pitch,
-                        duration=tied_duration
-                    )
+                    if not added_tempo:
+                        note_to_add = Note(
+                            pitch=pitch,
+                            duration=tied_duration,
+                            directions=tempo
+                        )
+                        added_tempo = True
+                    else:
+                        note_to_add = Note(
+                            pitch=pitch,
+                            duration=tied_duration
+                        )
 
                     if current_time + tied_duration > max_length:
                         part.append(measure)

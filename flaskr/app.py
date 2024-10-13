@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 from flask import render_template, request
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -8,7 +8,6 @@ from src.extract import extract_notes
 from src.score import export_score
 
 load_dotenv()
-
 
 app = Flask(__name__)
 CORS(app)
@@ -20,26 +19,36 @@ def index():
 
 @app.route("/snatch", methods=["POST"])
 def snatch():
+    # Get request body
+    data = request.get_json()
+
+    # tempo, maxSeconds
     # Download the video
-    url = request.form["url"]
-    name = download_video(url)
+    dl_res = download_video(data["url"])
+
+    print('Downloaded video:', dl_res['title'])
+    print('Tempo:', dl_res['tempo'])
+    print('Max seconds:', data['maxSeconds'])
+
+    if 'tempo' in data:
+        dl_res['tempo'] = data['tempo']
 
     # Extract the notes
-    notes = extract_notes(name)
+    notes = extract_notes(dl_res['file_path'], dl_res['tempo'], data['maxSeconds'])
 
     # Export score
-    export_score(notes)
+    export_score(notes, dl_res['tempo'], dl_res['title'])
 
-    return name
+    return dl_res['title']
 
     
 @app.post("/download")
 def download():
     # Download the video
     url = request.form["url"]
-    name = download_video(url)
+    data = download_video(url)
 
-    return name
+    return jsonify(data)
 
 
 if __name__ == "__main__":
