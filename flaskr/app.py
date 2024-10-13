@@ -63,5 +63,21 @@ def pdf():
     return send_file("output/sheet_music.pdf", as_attachment=True)
 
 
+@app.get("/xml/1")
+def xml1():
+    # Send the SXMLFKejwufh bnwejfuhiwer
+    return send_file("1.xml", as_attachment=True)
+
+@app.get("/xml/2")
+def xml2():
+    # Send the SXMLFKejwufh bnwejfuhiwer
+    return send_file("2.xml", as_attachment=True)
+
+@app.get("/xml/3")
+def xml3():
+    # Send the SXMLFKejwufh bnwejfuhiwer
+    return send_file("3.xml", as_attachment=True)
+
+
 if __name__ == "__main__":
     app.run(debug=True)
