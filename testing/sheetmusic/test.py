@@ -205,7 +205,8 @@ score.export_to_file("my_music.xml")
 
 musicxml_file = "my_music.xml"
 pdf_file = "my_music.pdf"
-musescore_executable = "C:/Program Files/MuseScore 3/bin/MuseScore3.exe"
+# musescore_executable = "C:/Program Files/MuseScore 3/bin/MuseScore3.exe"
+musescore_executable = "/usr/bin/musescore"
 
 convert_musicxml_to_pdf(musicxml_file, pdf_file, musescore_executable)
 

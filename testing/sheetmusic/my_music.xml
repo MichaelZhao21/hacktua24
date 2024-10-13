@@ -37,15 +37,6 @@
 					<line>2</line>
 				</clef>
 			</attributes>
-			<direction placement="above">
-				<direction-type>
-					<metronome>
-						<beat-unit>quarter</beat-unit>
-						<per-minute>120</per-minute>
-					</metronome>
-				</direction-type>
-				<voice>1</voice>
-			</direction>
 			<note>
 				<pitch>
 					<step>D</step>
@@ -1173,15 +1164,6 @@
 					<line>4</line>
 				</clef>
 			</attributes>
-			<direction placement="above">
-				<direction-type>
-					<metronome>
-						<beat-unit>quarter</beat-unit>
-						<per-minute>120</per-minute>
-					</metronome>
-				</direction-type>
-				<voice>1</voice>
-			</direction>
 			<note>
 				<pitch>
 					<step>A</step>
