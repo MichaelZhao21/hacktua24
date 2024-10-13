@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { OpenSheetMusicDisplay } from 'opensheetmusicdisplay';
+import './Result.css';
 
 interface ResultProps {
   xmlPath: string;
@@ -34,7 +35,11 @@ const Result: React.FC<ResultProps> = ({ xmlPath }) => {
     };
   }, [xmlPath]);
 
-  return <div ref={containerRef} />;
+  return (
+    <div className="floating-card"> {/* Card wrapper */}
+      <div ref={containerRef} className="music-display" /> {/* The container for OSMD */}
+    </div>
+  );
 };
 
 export default Result;
