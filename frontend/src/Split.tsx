@@ -10,7 +10,7 @@ const Split = () => {
     <div>
     <Button>
         <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</Link>
-      </Button>
+    </Button>
     <div className="h-screen flex">
       {/* Form Section */}
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-100">
