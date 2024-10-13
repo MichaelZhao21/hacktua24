@@ -24,11 +24,13 @@ def split_duration_into_tied_notes(duration):
 
     return tied_notes
 
-def process_notes(part, notes, clef):
+def process_notes(part, notes, clef, tempo, no_tempo=False):
     m_number = 1
     max_length = 4
     measure = Measure(number=m_number)
     current_time = 0
+    tempo = MetronomeMark(beat_length=1.0, bpm=tempo)
+    added_tempo = no_tempo
 
     # Add the clef to the first measure
     measure.clef = clef
@@ -61,16 +63,23 @@ def process_notes(part, notes, clef):
 
             # Create chord if we have valid pitches
             if pitches:
-                chord_to_add = Chord(pitches=pitches, duration=duration)
+                # Consider durations too (split into tied notes)
+                tied_durations = split_duration_into_tied_notes(duration)
+                for tied_duration in tied_durations:
+                    if not added_tempo:
+                        chord_to_add = Chord(pitches=pitches, duration=tied_duration, directions=tempo)
+                        added_tempo = True
+                    else:
+                        chord_to_add = Chord(pitches=pitches, duration=tied_duration)
 
-                if current_time + duration > max_length:
-                    part.append(measure)
-                    m_number += 1
-                    measure = Measure(number=m_number)
-                    current_time = 0
+                    if current_time + tied_duration > max_length:
+                        part.append(measure)
+                        m_number += 1
+                        measure = Measure(number=m_number)
+                        current_time = 0
 
-                measure.append(chord_to_add)
-                current_time += duration
+                    measure.append(chord_to_add)
+                    current_time += tied_duration
 
         else:
             # Single note or rest
@@ -101,10 +110,18 @@ def process_notes(part, notes, clef):
                 tied_durations = split_duration_into_tied_notes(note.duration)
 
                 for tied_duration in tied_durations:
-                    note_to_add = Note(
-                        pitch=pitch,
-                        duration=tied_duration
-                    )
+                    if not added_tempo:
+                        note_to_add = Note(
+                            pitch=pitch,
+                            duration=tied_duration,
+                            directions=tempo
+                        )
+                        added_tempo = True
+                    else:
+                        note_to_add = Note(
+                            pitch=pitch,
+                            duration=tied_duration
+                        )
 
                     if current_time + tied_duration > max_length:
                         part.append(measure)
@@ -150,13 +167,15 @@ def convert_musicxml_to_pdf(musicxml_path, pdf_path, musescore_path):
         raise FileNotFoundError(f"MuseScore executable not found: {musescore_path}")
     
     try:
-        subprocess.run([musescore_path, "-o", pdf_path, musicxml_path], check=True, start_new_session=True)
+        env = os.environ.copy()
+        env['DISPLAY'] = ''
+        subprocess.run([musescore_path, "-o", pdf_path, musicxml_path], check=True, start_new_session=True, env=env)
         print(f"Successfully converted {musicxml_path} to {pdf_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error converting MusicXML file to PDF: {e}")
 
 
-def export_score(Notes):
+def export_score(Notes, tempo):
     # Create a score
     score = Score(title="My Composition")
 
@@ -179,8 +198,8 @@ def export_score(Notes):
     left_hand_notes = [note for note in Notes if note.hand == "L"]
     
     # Process notes for each part, adding the clef to the first measure
-    process_notes(part1, right_hand_notes, part1clef)
-    process_notes(part2, left_hand_notes, part2clef)
+    process_notes(part1, right_hand_notes, part1clef, tempo)
+    process_notes(part2, left_hand_notes, part2clef, tempo, True)
 
     # Check the number of measures and equalize if necessary
     if len(part1) < len(part2):

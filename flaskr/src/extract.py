@@ -6,8 +6,12 @@ from collections import namedtuple
 
 Note = namedtuple("Note", ["name", "sharp", "octave", "hand", "start", "end", "duration"])
 
-def extract_notes(file_path):
+fps = 60
+
+def extract_notes(file_path, bpm=100, max_seconds=30):
     vidcap = cv2.VideoCapture(file_path) 
+
+    limit = max_seconds * fps
 
     # Video processing
     count = -1
@@ -125,8 +129,6 @@ def extract_notes(file_path):
     curr_keys = dict()
 
     # Iterate through the rest of the frames
-    # TOOD: Extract
-    limit = 2000
     while success and count < limit:
         success, image = vidcap.read()
         if not success:
@@ -248,10 +250,6 @@ def extract_notes(file_path):
 
     # Sort notes again
     notes.sort(key=lambda x: x.start)
-
-    # TODO: THESE WILL ACTUALLY BE EXPORTEDDDD
-    fps = 60
-    bpm = 136
 
     MIN_REST_TIME = (fps / (bpm / 60)) / 2
     print("Minimum rest time:", MIN_REST_TIME)
