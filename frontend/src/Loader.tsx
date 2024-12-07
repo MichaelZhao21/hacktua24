@@ -14,14 +14,6 @@ const Loader = () => {
 export default function App() {
   const [loading, setLoading] = useState(true);
 
-  // Simulate a loading delay (for example, fetching data)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false); // After 3 seconds, loading will stop
-    }, 3000);
-    return () => clearTimeout(timer); // Clean up the timer on component unmount
-  }, []);
-
   return (
     <div>
       {loading ? (

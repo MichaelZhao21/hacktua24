@@ -74,10 +74,10 @@ const Split = () => {
     }
   };
 
-  // If the page or request is loading, show the Loader component
-  if (isPageLoading || loading) {
-    return <Loader />;
-  }
+  // // If the page or request is loading, show the Loader component
+  // if (isPageLoading || loading) {
+  //   return <Loader />;
+  // }
 
   return (
     <div>
@@ -95,7 +95,7 @@ const Split = () => {
             <h3 className="text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 poppins-bold">
               Instant Sheet Music from Your Favorite Piano Videos
             </h3>
-            <h5 className="text-2xl font-normal text-center poppins bg-clip-text text-transparent w-[30%] bg-gradient-to-r text-gray-50 pb-8">
+            <h5 className="text-2xl font-normal text-center poppins bg-clip-text w-[30%] bg-gradient-to-r text-gray-50 pb-8">
               Just upload the URL of any MIDI YouTube video to get a PDF version
               of the sheet music.
             </h5>
@@ -189,15 +189,15 @@ const Split = () => {
           {loading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
               <Typography variant="h6" color="white">
-                <div className="flex flex-col">
+                <div className="flex flex-col items-center">
                   <l-ring
                     size="40"
                     stroke="5"
                     bg-opacity="0"
                     speed="2"
-                    color="black"
+                    color="white"
                   ></l-ring>
-                  Loading...
+                  <div className="mt-2">Loading...</div>
                 </div>
               </Typography>
             </div>
